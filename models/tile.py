@@ -3,19 +3,23 @@ from typing import Dict
 from enum import Enum
 from abc import ABC, abstractmethod
 
+
 class TileState(Enum):
     UNKNOWN = 0
     UNLOCKED = 1
     LOCKED = 2
     COMPLETED = 3
 
+
 class Criteria(ABC):
     @abstractmethod
     def is_satisfied(self) -> bool:
         pass
+
     @abstractmethod
     def submit(self, inc: int, key: str) -> bool:
         pass
+
 
 @dataclass
 class Tile:
@@ -39,7 +43,8 @@ class Tile:
     def complete(self):
         """Mark the tile as completed."""
         for requirement in self.requirements.values():
-            if not requirement.is_satisfied(): return
+            if not requirement.is_satisfied():
+                return
 
         self.state = TileState.COMPLETED
 
@@ -49,4 +54,4 @@ class Tile:
         if key in self.requirements:
             done = self.requirements[key].submit(inc, key)
 
-        if done: return "Requirement completed"
+        return done
