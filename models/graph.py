@@ -14,11 +14,14 @@ class GraphNode:
         self.neighbors.append(neighbor)
         return self
 
-    def update_neighbors(self, new_state: TileState):
+    def update_neighbors(self, new_state: TileState, ignoring: List[TileState] | None = None):
         for neighbor in self.neighbors:
-            # This has and edge case where if the neighbor is already completed, it will not hide the neighbor
-            if neighbor.value.state == TileState.COMPLETED:
-                return
+            if not ignoring:
+                continue
+
+            if neighbor.value.state in ignoring:
+                continue
+
             neighbor.value.state = new_state
 
     def __repr__(self):

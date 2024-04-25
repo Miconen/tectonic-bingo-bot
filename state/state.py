@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 import sys
 
 import jsonpickle
@@ -8,20 +8,21 @@ from models.graph import GraphNode
 
 class Team(object):
     name: str
-    members: List[str]
-    board: List[GraphNode]
+    members: List[int]
+    board: Dict[int, GraphNode]
 
-    def __init__(self, name: str, members: List[str], board: List[GraphNode]):
-        self.name = name
+    def __init__(self, members: List[int], board: Dict[int, GraphNode]):
         self.members = members
         self.board = board
 
 
 class State(object):
-    teams: List[Team]
+    teams: Dict[str, Team]
+    tile_info: List[str]
 
     def __init__(self):
-        self.teams = []
+        self.teams = {}
+        self.tile_info = []
 
     def serialize(self):
         """Serialize the state to a JSON file."""
