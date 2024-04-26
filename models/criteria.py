@@ -14,3 +14,9 @@ class Count(Criteria):
     def submit(self, inc: int, key: str) -> bool:
         self.count += inc
         return self.is_satisfied()
+
+    def would_complete(self, inc: int, key: str) -> bool:
+        """
+        Used by submissions to check if the requirement would complete the tile before the submission is accepted.
+        """
+        return self.count + inc >= self.threshold

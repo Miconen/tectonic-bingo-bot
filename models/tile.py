@@ -77,6 +77,10 @@ class Criteria(ABC):
     def submit(self, inc: int, key: str) -> bool:
         pass
 
+    @abstractmethod
+    def would_complete(self, inc: int, key: str) -> bool:
+        pass
+
 
 @dataclass
 class Submission:
@@ -89,14 +93,15 @@ class Submission:
 
 @dataclass
 class Tile:
-    id: int
-    image: str
-    name: str
-    description: str
     state: TileState
     theme: TileTheme
-    required_for_completetion: int
     requirements: Dict[str, Criteria]
+    id: int = 0
+    image: str = ""
+    name: str = ""
+    description: str = ""
+    required_for_completetion: int = 1
+    rules_link: str = ""
 
     # Additional functionalities can be added as methods within the class
     def is_complete(self) -> bool:
@@ -120,9 +125,25 @@ class Tile:
         self.state = TileState.COMPLETED
 
     def submit(self, key: str, amount: int):
-        """Submit a requirement to unlock the tile."""
+        """Submit a requirement to unlock the task."""
         done = False
         if key in self.requirements:
             done = self.requirements[key].submit(amount, key)
 
         return done
+
+    def would_complete_task(self, key: str, amount: int):
+        """Check if submitting a requirement would complete the task."""
+        if key in self.requirements:
+            return self.requirements[key].would_complete(amount, key)
+
+        return False
+
+
+    def would_complete_tile(self, key: str, amount: int):
+        """Check if submitting a requirement would complete the tile."""
+        for requirement in self.requirements.values():
+            if not requirement.is_satisfied() and not requirement.would_complete(amount, key):
+                return False
+
+        return True

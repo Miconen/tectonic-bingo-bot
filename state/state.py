@@ -3,17 +3,7 @@ import sys
 
 import jsonpickle
 
-from models.graph import GraphNode
-
-
-class Team(object):
-    name: str
-    members: List[int]
-    board: Dict[int, GraphNode]
-
-    def __init__(self, members: List[int], board: Dict[int, GraphNode]):
-        self.members = members
-        self.board = board
+from models.team import Team
 
 
 class State(object):

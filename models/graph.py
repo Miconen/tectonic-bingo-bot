@@ -1,28 +1,16 @@
 from typing import List
 from models.tile import Tile, TileState
 
-
-class GraphNode:
+class GraphNode(object):
     value: Tile
-    neighbors: List["GraphNode"]
+    neighbors: List[int]
 
     def __init__(self, value):
         self.value = value
         self.neighbors = []
 
-    def add_neighbor(self, neighbor):
-        self.neighbors.append(neighbor)
-        return self
-
-    def update_neighbors(self, new_state: TileState, ignoring: List[TileState] | None = None):
-        for neighbor in self.neighbors:
-            if not ignoring:
-                continue
-
-            if neighbor.value.state in ignoring:
-                continue
-
-            neighbor.value.state = new_state
+    def add_neighbor(self, neighbor_id: int):
+        self.neighbors.append(neighbor_id)
 
     def __repr__(self):
         return f"GraphNode({self.value.name})"

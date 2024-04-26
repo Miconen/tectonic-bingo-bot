@@ -1,13 +1,122 @@
+from dataclasses import dataclass
 import discord
 from discord.ext import commands
 from io import BytesIO
+from typing import Dict
 
+from models.graph import GraphNode
 from state.state import state
 from utils.teams import in_team
-from models.tile import TileState
-# from bot.utils import get_proof_file
+from models.tile import TileState, Tile
+from models.team import Team
+from bot.utils import get_tile_embed, get_submission_message
 
 app_commands = discord.app_commands
+
+
+@dataclass
+class Submission:
+    team: Team
+    board: Dict[int, GraphNode]
+    node: GraphNode
+    i: discord.Interaction
+    tile: Tile
+    amount: int
+    task: str
+
+
+async def accept_submission(submission: Submission):
+    message = ""
+    completion = submission.tile.submit(submission.task, submission.amount)
+
+    # If task was not completed
+    if not completion:
+        message = "Submission successful! Did not complete the tile or task."
+
+    # If tile is not entirely complete
+    if completion:
+        message = "Task completed! This tile is now completed partially."
+
+    # If tile is entirely complete
+    if submission.tile.check_complete():
+        message = "Tile completed! Unlocking new tiles!"
+
+        # Complete the tile
+        submission.tile.complete()
+
+    return get_submission_message(
+        submission.i,
+        submission.tile,
+        message,
+        "✅ Submission approved",
+        submission.amount,
+        submission.task,
+    )
+
+
+async def deny_submission(submission: Submission):
+    message = ""
+    completion = submission.tile.submit(submission.task, submission.amount)
+
+    # If task was not completed
+    if not completion:
+        message = "This would have partially completed a task."
+
+    # If tile is not entirely complete
+    if completion:
+        message = "This would have completed a task, partially completing the tile."
+
+    # If tile is entirely complete
+    if submission.tile.check_complete():
+        message = "This would have completed the tile, unlocking new tiles."
+
+    return get_submission_message(
+        submission.i,
+        submission.tile,
+        message,
+        "❌ Submission denied",
+        submission.amount,
+        submission.task,
+    )
+
+
+class Buttons(discord.ui.View):
+    def __init__(self, submission: Submission, timeout=180):
+        super().__init__(timeout=timeout)
+        self.submission = submission
+
+    @discord.ui.button(
+        custom_id="accept", label="Accept", style=discord.ButtonStyle.green
+    )
+    async def accept_button(self, i: discord.Interaction, button: discord.ui.Button):
+        if self.submission.i.channel is None:
+            return
+        if not isinstance(self.submission.i.channel, discord.TextChannel):
+            return
+
+        await i.response.edit_message(
+            content=await accept_submission(self.submission), view=None
+        )
+
+        # Unlock neighboring non completed tiles
+        new_tiles = self.submission.team.update_neighboring(
+            self.submission.node, TileState.UNLOCKED, filter=[TileState.COMPLETED]
+        )
+
+        for tile in new_tiles:
+            embed = get_tile_embed(i, tile)
+            await self.submission.i.channel.send("**New tile unlocked!**", embed=embed)
+
+    @discord.ui.button(custom_id="deny", label="Deny", style=discord.ButtonStyle.red)
+    async def deny_button(self, i: discord.Interaction, button: discord.ui.Button):
+        if self.submission.i.channel is None:
+            return
+        if not isinstance(self.submission.i.channel, discord.TextChannel):
+            return
+
+        await i.response.edit_message(
+            content=await deny_submission(self.submission), view=None
+        )
 
 
 class Submit(commands.Cog):
@@ -21,7 +130,7 @@ class Submit(commands.Cog):
     @app_commands.command(
         name="submit", description="Submit a task associated with a tile"
     )
-    # @app_commands.describe(task="Task to submit for completion")
+    @app_commands.describe(task="Task to submit for completion")
     @app_commands.describe(proof="Screenshot proof of completion")
     @app_commands.describe(amount="Optional parameter for amount, defaults to one")
     async def submit(
@@ -39,22 +148,20 @@ class Submit(commands.Cog):
 
         # If proof MIME type not of image/jppeg or image/png return
         if proof.content_type not in ["image/jpeg", "image/png"]:
-            return await i.response.send_message("Proof must be a .jpeg or .png")
+            return await i.response.send_message(
+                "Proof must be a .jpeg or .png, if you think this is a mistake, please try again or contact an admin"
+            )
 
         team = in_team(i.user.id, state.teams)
 
         if team is None:
-            await i.response.send_message(f"You are not in a bingo team")
+            await i.response.send_message(
+                f"You are not in a bingo team, if you think this is a mistake, please contact an admin",
+                ephemeral=True,
+            )
             return
 
-        # Loop through all visible tiles and check if the task matches any tiles requirements
-        match = True
-        if not match:
-            return
-
-        # Check if the task has already been submitted
         # Get id of GraphNode that includes the tile that includes the task
-
         id = None
         status = TileState.UNKNOWN
         for tile_id, node in state.teams[team].board.items():
@@ -73,6 +180,7 @@ class Submit(commands.Cog):
                 id = tile_id
                 break
 
+        # Check if the task has already been submitted
         if status == TileState.COMPLETED:
             return await i.response.send_message(
                 f"{task} is already completed for {team}"
@@ -83,17 +191,15 @@ class Submit(commands.Cog):
                 f"{task} is not a part of an unlocked tile for {team}"
             )
 
-        team = state.teams[team]
-        board = team.board
-        node = board[id]
-        tile = node.value
-        completed = tile.submit(task, amount)
-
-        count = f'{amount}x ' if amount else ''
-
-        # Check if no admins online
-        # If no admins online, submit task as pending
-        # If admins online, ping and ask to review task
+        submission = Submission(
+            team=state.teams[team],
+            board=state.teams[team].board,
+            node=state.teams[team].board[id],
+            tile=state.teams[team].board[id].value,
+            amount=amount,
+            task=task,
+            i=i,
+        )
 
         # We determine the input is successful and valid here, allowing for file parsing
         f = await get_proof_file(proof)
@@ -102,37 +208,30 @@ class Submit(commands.Cog):
                 f"Error reading proof: {f}\n\nPlease contact an admin."
             )
 
+        message = ""
+
         # If task was not completed
-        if not completed:
-            return await i.response.send_message(
-                f"{count}{task} submitted by {i.user.display_name}",
-                file=discord.File(
-                    fp=f, filename=f'proof.{proof.content_type.split("/")[1]}'
-                ),
-            )
+        if not submission.tile.would_complete_task(task, amount):
+            message = "This would complete a part of a task."
+
+        # If tile is not entirely complete
+        if submission.tile.would_complete_task(task, amount):
+            message = "This would complete a task, partially completing the tile."
 
         # If tile is entirely complete
-        if tile.check_complete():
-            # Complete the tile
-            tile.complete()
+        if submission.tile.would_complete_tile(task, amount):
+            message = "This would complete the tile, unlocking new tiles."
 
-            # Unlock neighboring non completed tiles
-            node.update_neighbors(TileState.UNLOCKED, ignoring=[TileState.COMPLETED])
-
-            return await i.response.send_message(
-                f"{count}{task} completed by {i.user.display_name} completing the tile",
-                file=discord.File(
-                    fp=f, filename=f'proof.{proof.content_type.split("/")[1]}'
-                ),
-            )
-
-        # If tile is partially complete
-        return await i.response.send_message(
-            f"{count}{task} submitted by {i.user.display_name}, partially completing the tile",
+        await i.response.send_message(
+            get_submission_message(
+                i, submission.tile, message, "⌛ Pending approval...", amount, task
+            ),
             file=discord.File(
                 fp=f, filename=f'proof.{proof.content_type.split("/")[1]}'
             ),
+            view=Buttons(submission),
         )
+
 
 async def get_proof_file(proof: discord.Attachment) -> BytesIO | Exception:
     try:
@@ -140,6 +239,7 @@ async def get_proof_file(proof: discord.Attachment) -> BytesIO | Exception:
         return BytesIO(f)
     except Exception as e:
         return e
+
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Submit(bot))
