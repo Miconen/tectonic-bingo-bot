@@ -94,6 +94,9 @@ class Buttons(discord.ui.View):
         if not isinstance(self.submission.i.channel, discord.TextChannel):
             return
 
+        if not discord.Permissions(i.permissions.value).administrator:
+            return
+
         await i.response.edit_message(
             content=await accept_submission(self.submission), view=None
         )
@@ -112,6 +115,9 @@ class Buttons(discord.ui.View):
         if self.submission.i.channel is None:
             return
         if not isinstance(self.submission.i.channel, discord.TextChannel):
+            return
+
+        if not discord.Permissions(i.permissions.value).administrator:
             return
 
         await i.response.edit_message(
