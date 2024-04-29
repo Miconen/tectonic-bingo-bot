@@ -88,13 +88,11 @@ class Buttons(discord.ui.View):
     @discord.ui.button(
         custom_id="accept", label="Accept", style=discord.ButtonStyle.green
     )
+    @commands.has_permissions(manage_roles=True)
     async def accept_button(self, i: discord.Interaction, button: discord.ui.Button):
         if self.submission.i.channel is None:
             return
         if not isinstance(self.submission.i.channel, discord.TextChannel):
-            return
-
-        if not discord.Permissions(i.permissions.value).administrator:
             return
 
         await i.response.edit_message(
@@ -111,6 +109,7 @@ class Buttons(discord.ui.View):
             await self.submission.i.channel.send("**New tile unlocked!**", embed=embed)
 
     @discord.ui.button(custom_id="deny", label="Deny", style=discord.ButtonStyle.red)
+    @commands.has_permissions(manage_roles=True)
     async def deny_button(self, i: discord.Interaction, button: discord.ui.Button):
         if self.submission.i.channel is None:
             return

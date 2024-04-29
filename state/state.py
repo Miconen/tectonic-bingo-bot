@@ -7,7 +7,7 @@ from models.team import Team
 
 
 class State(object):
-    teams: Dict[str, Team]
+    teams: Dict[int, Team]
     tile_info: List[str]
 
     def __init__(self):
@@ -52,7 +52,6 @@ class State(object):
             raise Exception("State is not an instance of State")
 
         return s
-
 
 
 state = State.deserialize()

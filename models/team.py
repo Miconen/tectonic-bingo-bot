@@ -1,18 +1,22 @@
+import discord
+
 from typing import List, Dict
 from models.graph import GraphNode
 from models.tile import Tile, TileState
 
 class Team(object):
-    name: str
-    members: List[int]
+    role: discord.Role
     board: Dict[int, GraphNode]
 
-    def __init__(self, members: List[int], board: Dict[int, GraphNode]):
-        self.members = members
+    def __init__(self, role: discord.Role, board: Dict[int, GraphNode]):
         self.board = board
+        self.role = role
 
     def get_tile(self, tile_id: int):
         return self.board[tile_id]
+
+    def get_name(self):
+        return self.role.name
 
     def update_neighboring(self, node: GraphNode, new_state: TileState, filter: List[TileState] | None = None):
         """Update the state of neighboring tiles of a given tile. Returning the updated tiles."""

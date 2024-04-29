@@ -25,7 +25,6 @@ class List(commands.Cog):
             return
 
         team = in_team(i.user.id, state.teams)
-
         if team is None:
             await i.response.send_message(
                 f"You are not in a team (Teams: {len(state.teams)})"
@@ -41,7 +40,7 @@ class List(commands.Cog):
             embed = get_tile_embed(i, tile)
             await i.channel.send(embed=embed)
 
-        await i.response.send_message(f"Listed all unlocked tiles for {team}")
+        await i.response.send_message(f"Listing all unlocked tiles for team: **{state.teams[team].role.name}**")
 
 
 async def setup(bot: commands.Bot) -> None:

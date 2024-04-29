@@ -3,6 +3,7 @@ import discord
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True
 
 bot = commands.Bot(command_prefix=commands.when_mentioned, intents=intents)
 
@@ -11,6 +12,7 @@ cogs = (
     "bot.commands.debug",
     "bot.commands.tile",
     "bot.commands.submit",
+    "bot.commands.teams",
 )
 
 

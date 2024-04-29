@@ -2,8 +2,11 @@ from typing import Dict
 from state.state import Team
 
 
-def in_team(user_id: int, teams: Dict[str, Team]):
+def in_team(user_id: int, teams: Dict[int, Team]):
     # Get teams[team].name that the user belongs in
-    for name, team in teams.items():
-        if user_id in team.members:
-            return name
+    for team in teams.values():
+        for member in team.role.members:
+            if user_id != member.id:
+                continue
+
+            return team.role.id

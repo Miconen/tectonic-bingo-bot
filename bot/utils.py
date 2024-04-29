@@ -1,7 +1,9 @@
 from typing import List, Dict
 from random import choice, random
-from models.tile import Criteria
+from models.tile import Criteria, TileState
+from models.team import Team
 from models.criteria import Count
+from utils.board import neighbor_map
 
 import discord
 
@@ -17,46 +19,6 @@ footer_texts: List[str] = [
     "🥄🐀",
     "Free tile for who reads this",
 ]
-
-neighbor_map: Dict[int, List[int]] = {
-    1: [7, 8],
-    2: [7, 8, 11, 12],
-    3: [11, 12, 17, 18],
-    4: [17, 18, 21, 22],
-    5: [26, 27],
-    6: [31, 32],
-    7: [1, 2],
-    8: [1, 2],
-    9: [11, 13],
-    10: [12, 14],
-    11: [2, 3, 9, 15],
-    12: [2, 3, 10, 16],
-    13: [9, 15],
-    14: [10, 16],
-    15: [11, 13, 17, 19],
-    16: [12, 14, 18, 20],
-    17: [3, 4, 15, 19],
-    18: [3, 4, 16, 20],
-    19: [15, 17, 21, 25],
-    20: [16, 18, 22, 28],
-    21: [4, 19, 25, 26],
-    22: [4, 20, 27, 28],
-    23: [29, 30],
-    24: [33, 34],
-    25: [19, 21, 30, 31],
-    26: [5, 21, 31],
-    27: [5, 22, 32],
-    28: [20, 22, 32, 33],
-    29: [23, 35],
-    30: [23, 25, 35],
-    31: [6, 25, 26, 35],
-    32: [6, 27, 28, 36],
-    33: [24, 28, 36],
-    34: [24, 36],
-    35: [29, 30, 31],
-    36: [32, 33, 34],
-}
-
 
 def print_requirements(requirements: Dict[str, Criteria]):
     res = []
@@ -133,3 +95,7 @@ def get_submission_message(
         ", ".join(f"#{str(n)}" for n in neighbor_map[tile.id]),
     )
     return message
+
+def get_by_state(status: TileState, team: Team):
+    return [tile for tile in team.board.values() if tile.value.state == status]
+
