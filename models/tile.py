@@ -1,5 +1,7 @@
+import discord
+
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, List
 from enum import Enum
 from abc import ABC, abstractmethod
 
@@ -92,6 +94,18 @@ class Submission:
 
 
 @dataclass
+class Proof:
+    approved: bool
+    task: str
+    amount: int
+    submitted_at: float
+    submitted_by: discord.Member | discord.User
+    message: discord.Message | None = None
+    approved_at: float | None = None
+    approved_by: discord.Member | discord.User | None = None
+
+
+@dataclass
 class Tile:
     state: TileState
     theme: TileTheme
@@ -102,6 +116,7 @@ class Tile:
     description: str = ""
     required_for_completetion: int = 1
     rules_link: str = ""
+    proof: List[Proof] | None = None
 
     # Additional functionalities can be added as methods within the class
     def is_complete(self) -> bool:
@@ -139,11 +154,12 @@ class Tile:
 
         return False
 
-
     def would_complete_tile(self, key: str, amount: int):
         """Check if submitting a requirement would complete the tile."""
         for requirement in self.requirements.values():
-            if not requirement.is_satisfied() and not requirement.would_complete(amount, key):
+            if not requirement.is_satisfied() and not requirement.would_complete(
+                amount, key
+            ):
                 return False
 
         return True

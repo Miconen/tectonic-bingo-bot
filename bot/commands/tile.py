@@ -45,7 +45,7 @@ class Tile(commands.Cog):
 
         if tile is None:
             await i.response.send_message(
-                f"No tile unlocked with ID #{tile_id} for team ({team})"
+                f"No tile unlocked with ID #{tile_id} for team ({state.teams[team].role.name})"
             )
             return
 

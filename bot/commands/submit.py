@@ -1,3 +1,4 @@
+from time import time
 from dataclasses import dataclass
 import discord
 from discord.ext import commands
@@ -7,7 +8,7 @@ from typing import Dict
 from models.graph import GraphNode
 from state.state import state
 from utils.teams import in_team
-from models.tile import TileState, Tile
+from models.tile import TileState, Tile, Proof
 from models.team import Team
 from bot.utils import get_tile_embed, get_submission_message
 
@@ -20,14 +21,23 @@ class Submission:
     board: Dict[int, GraphNode]
     node: GraphNode
     i: discord.Interaction
+    proof_index: int
     tile: Tile
     amount: int
     task: str
 
 
 async def accept_submission(submission: Submission):
+    if submission.tile.proof is None:
+        return "No proof was submitted with this task."
+
     message = ""
     completion = submission.tile.submit(submission.task, submission.amount)
+
+    # Accept proof
+    submission.tile.proof[submission.proof_index].approved = True
+    submission.tile.proof[submission.proof_index].approved_by = submission.i.user
+    submission.tile.proof[submission.proof_index].approved_at = time()
 
     # If task was not completed
     if not completion:
@@ -57,6 +67,9 @@ async def accept_submission(submission: Submission):
 async def deny_submission(submission: Submission):
     message = ""
     completion = submission.tile.submit(submission.task, submission.amount)
+
+    # Remove proof
+    submission.tile.proof = None
 
     # If task was not completed
     if not completion:
@@ -196,22 +209,35 @@ class Submit(commands.Cog):
                 f"{task} is not a part of an unlocked tile for {team}"
             )
 
-        submission = Submission(
-            team=state.teams[team],
-            board=state.teams[team].board,
-            node=state.teams[team].board[id],
-            tile=state.teams[team].board[id].value,
-            amount=amount,
-            task=task,
-            i=i,
-        )
-
         # We determine the input is successful and valid here, allowing for file parsing
         f = await get_proof_file(proof)
         if isinstance(f, Exception):
             return await i.response.send_message(
                 f"Error reading proof: {f}\n\nPlease contact an admin."
             )
+
+        team = state.teams[team]
+        board = team.board
+        node = board[id]
+        tile = node.value
+
+        # Initialize proof list
+        if tile.proof is None:
+            tile.proof = []
+
+        tile.proof.append(Proof(False, task, amount, time(), i.user))
+        index = tile.proof.index(tile.proof[-1])
+
+        submission = Submission(
+            team=team,
+            board=board,
+            node=node,
+            tile=tile,
+            proof_index=index,
+            amount=amount,
+            task=task,
+            i=i,
+        )
 
         message = ""
 
@@ -227,7 +253,7 @@ class Submit(commands.Cog):
         if submission.tile.would_complete_tile(task, amount):
             message = "This would complete the tile, unlocking new tiles."
 
-        await i.response.send_message(
+        msg = await i.channel.send(
             get_submission_message(
                 i, submission.tile, message, "⌛ Pending approval...", amount, task
             ),
@@ -236,6 +262,9 @@ class Submit(commands.Cog):
             ),
             view=Buttons(submission),
         )
+
+        if submission.tile.proof is not None:
+            submission.tile.proof[index].message = msg
 
 
 async def get_proof_file(proof: discord.Attachment) -> BytesIO | Exception:
