@@ -66,21 +66,20 @@ async def accept_submission(submission: Submission):
 
 async def deny_submission(submission: Submission):
     message = ""
-    completion = submission.tile.submit(submission.task, submission.amount)
 
     # Remove proof
     submission.tile.proof = None
 
     # If task was not completed
-    if not completion:
+    if not submission.tile.would_complete_task(submission.task, submission.amount):
         message = "This would have partially completed a task."
 
     # If tile is not entirely complete
-    if completion:
+    if submission.tile.would_complete_task(submission.task, submission.amount):
         message = "This would have completed a task, partially completing the tile."
 
     # If tile is entirely complete
-    if submission.tile.check_complete():
+    if submission.tile.would_complete_tile(submission.task, submission.amount):
         message = "This would have completed the tile, unlocking new tiles."
 
     return get_submission_message(
