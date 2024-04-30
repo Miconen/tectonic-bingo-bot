@@ -54,6 +54,20 @@ async def accept_submission(submission: Submission):
         # Complete the tile
         submission.tile.complete()
 
+        # Unlock neighboring non completed tiles
+        new_tiles = submission.team.update_neighboring(
+            submission.node, TileState.UNLOCKED, filter=[TileState.COMPLETED]
+        )
+
+        for tile in new_tiles:
+            embed = get_tile_embed(submission.i, tile)
+            # Check if is text channel
+            if submission.i.channel is None:
+                return
+            if not isinstance(submission.i.channel, discord.TextChannel):
+                return
+            await submission.i.channel.send("**New tile unlocked!**", embed=embed)
+
     return get_submission_message(
         submission.i,
         submission.tile,
@@ -110,15 +124,6 @@ class Buttons(discord.ui.View):
         await i.response.edit_message(
             content=await accept_submission(self.submission), view=None
         )
-
-        # Unlock neighboring non completed tiles
-        new_tiles = self.submission.team.update_neighboring(
-            self.submission.node, TileState.UNLOCKED, filter=[TileState.COMPLETED]
-        )
-
-        for tile in new_tiles:
-            embed = get_tile_embed(i, tile)
-            await self.submission.i.channel.send("**New tile unlocked!**", embed=embed)
 
     @discord.ui.button(custom_id="deny", label="Deny", style=discord.ButtonStyle.red)
     @commands.has_permissions(manage_roles=True)
