@@ -1,8 +1,8 @@
 import discord
-from datetime import datetime
 from discord.ext import commands
 import jsonpickle
 
+from utils.time import get_relative_time, TimestampType
 from state.state import state
 
 # This file houses generic/testing related commands
@@ -60,21 +60,11 @@ class Debug(commands.Cog):
         for proof in tile.proof:
             res = ""
 
-            submitted_datetime = datetime.fromtimestamp(proof.submitted_at)
-            approved_datetime = None
-            if proof.approved_at is not None:
-                approved_datetime = datetime.fromtimestamp(proof.approved_at)
-
-            submitted_at = submitted_datetime.strftime("%Y-%m-%d %H:%M:%S")
-            approved_at = None
-            if approved_datetime is not None:
-                approved_at = approved_datetime.strftime("%Y-%m-%d %H:%M:%S")
-
             res += f"\n**Team:** {team.name}"
             res += f"\n**Task:** {proof.amount}x {proof.task}"
-            res += f"\n**Submitted:** {proof.submitted_by.display_name} {submitted_at}"
-            if approved_at is not None and proof.approved_by is not None:
-                res += f"\n**Approved:** {proof.approved_by.display_name} {approved_at}"
+            res += f"\n**Submitted:** {proof.submitted_by.display_name} {get_relative_time(TimestampType.DATE_TIME_SHORT, proof.submitted_at)} ({get_relative_time(TimestampType.RELATIVE, proof.submitted_at)})"
+            if proof.approved_at is not None and proof.approved_by is not None:
+                res += f"\n**Approved:** {proof.approved_by.display_name} {get_relative_time(TimestampType.DATE_TIME_SHORT, proof.approved_at)} ({get_relative_time(TimestampType.RELATIVE, proof.approved_at)})"
             if proof.message is not None:
                 res += f"\n**Message:** {proof.message.jump_url}"
 
