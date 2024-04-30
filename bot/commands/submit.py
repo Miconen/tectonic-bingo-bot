@@ -10,7 +10,12 @@ from state.state import state
 from utils.teams import in_team
 from models.tile import TileState, Tile, Proof
 from models.team import Team
-from bot.utils import get_tile_embed, get_submission_message
+from bot.utils import (
+    get_tile_embed,
+    get_submission_message,
+    get_tile_state_by_task,
+    get_tile_id_by_task,
+)
 
 app_commands = discord.app_commands
 
@@ -48,6 +53,7 @@ async def accept_submission(submission: Submission):
         message = "Task completed! This tile is now completed partially."
 
     # If tile is entirely complete
+    print(f"Would complete? {submission.tile.check_complete()}")
     if submission.tile.check_complete():
         message = "Tile completed! Unlocking new tiles!"
 
@@ -168,61 +174,40 @@ class Submit(commands.Cog):
         if not isinstance(i.channel, discord.TextChannel):
             return
 
-        # If proof MIME type not of image/jppeg or image/png return
-        if proof.content_type not in ["image/jpeg", "image/png"]:
-            return await i.response.send_message(
-                "Proof must be a .jpeg or .png, if you think this is a mistake, please try again or contact an admin"
-            )
-
         team = in_team(i.user.id, state.teams)
-
         if team is None:
-            await i.response.send_message(
-                f"You are not in a bingo team, if you think this is a mistake, please contact an admin",
-                ephemeral=True,
-            )
-            return
+            res = f"You are not in a bingo team, if you think this is a mistake, please contact an admin"
+            return await i.response.send_message(res, ephemeral=True)
 
-        # Get id of GraphNode that includes the tile that includes the task
-        id = None
-        status = TileState.UNKNOWN
-        for tile_id, node in state.teams[team].board.items():
-            print(node.value.requirements.keys())
-            if task in node.value.requirements.keys():
-                if node.value.state == TileState.UNKNOWN:
-                    continue
-                if node.value.state == TileState.LOCKED:
-                    continue
-
-                status = node.value.state
-
-                if node.value.state == TileState.COMPLETED:
-                    break
-
-                id = tile_id
-                break
-
+        status = get_tile_state_by_task(team, task)
         # Check if the task has already been submitted
         if status == TileState.COMPLETED:
-            return await i.response.send_message(
-                f"{task} is already completed for {team}"
-            )
+            res = f"{task} is already completed for {team}"
+            return await i.response.send_message(res)
 
-        if not id:
-            return await i.response.send_message(
-                f"{task} is not a part of an unlocked tile for {team}"
-            )
+        if status != TileState.UNLOCKED:
+            res = f"{task} is not a part of an unlocked tile for team: {state.teams[team].role.name}"
+            return await i.response.send_message(res)
+
+        task_tile_id = get_tile_id_by_task(team, task)
+        if task_tile_id is None:
+            res = f"{task} is not a part of an unlocked tile for team: {state.teams[team].role.name}"
+            return await i.response.send_message(res)
+
+        # If proof MIME type not of image/jppeg or image/png return
+        if proof.content_type not in ["image/jpeg", "image/png"]:
+            res = "Proof must be a .jpeg or .png, if you think this is a mistake, please try again or contact an admin"
+            return await i.response.send_message(res)
 
         # We determine the input is successful and valid here, allowing for file parsing
         f = await get_proof_file(proof)
         if isinstance(f, Exception):
-            return await i.response.send_message(
-                f"Error reading proof: {f}\n\nPlease contact an admin."
-            )
+            res = f"Error reading proof: {f}\n\nPlease contact an admin."
+            return await i.response.send_message(res)
 
         team = state.teams[team]
         board = team.board
-        node = board[id]
+        node = board[task_tile_id]
         tile = node.value
 
         # Initialize proof list

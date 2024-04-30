@@ -129,11 +129,12 @@ class Tile:
 
     def check_complete(self) -> bool:
         """Check if the tile requirements are completed."""
+        count = 0
         for requirement in self.requirements.values():
-            if not requirement.is_satisfied():
-                return False
+            if requirement.is_satisfied():
+                count += 1
 
-        return True
+        return count >= self.required_for_completetion
 
     def complete(self):
         """Mark the tile as completed."""
@@ -142,15 +143,21 @@ class Tile:
     def submit(self, key: str, amount: int):
         """Submit a requirement to unlock the task."""
         done = False
-        if key in self.requirements:
-            done = self.requirements[key].submit(amount, key)
+
+        print(f"Received submission for {key} with {amount} increment.")
+        for k in self.requirements.keys():
+            if key in k.split("|"):
+                done = self.requirements[k].submit(amount, key)
 
         return done
 
     def would_complete_task(self, key: str, amount: int):
         """Check if submitting a requirement would complete the task."""
-        if key in self.requirements:
-            return self.requirements[key].would_complete(amount, key)
+        # Split the key by "|", this is a hacky way to support multiple keys in one string
+        keys = key.split("|")
+        for k in keys:
+            if k in self.requirements:
+                return self.requirements[k].would_complete(amount, k)
 
         return False
 

@@ -4,6 +4,7 @@ from models.tile import Criteria, TileState
 from models.team import Team
 from models.criteria import Count
 from utils.board import neighbor_map
+from state.state import state
 
 import discord
 
@@ -20,17 +21,22 @@ footer_texts: List[str] = [
     "Free tile for who reads this",
 ]
 
+
 def print_requirements(requirements: Dict[str, Criteria]):
     res = []
 
     for key, req in requirements.items():
         completed = "✅" if req.is_satisfied() else "⬜"
 
+        k = key.split("|")
+        # Formats the key like so: 1, 2, 3, 4 or 5
+        joined_key = k[0] if len(k) == 1 else ", ".join(k[:-1]) + " or " + k[-1]
+
         if isinstance(req, Count) and req.threshold > 1:
-            res.append(f"{completed} - {key} ({req.count}/{req.threshold})")
+            res.append(f"{completed} - {joined_key} ({req.count}/{req.threshold})")
             continue
 
-        res.append(f"{completed} - {key}")
+        res.append(f"{completed} - {joined_key}")
 
     return "\n".join(res)
 
@@ -96,6 +102,42 @@ def get_submission_message(
     )
     return message
 
+
 def get_by_state(status: TileState, team: Team):
     return [tile for tile in team.board.values() if tile.value.state == status]
 
+
+def get_tile_state_by_task(team_id: int, task: str):
+    found = None
+
+    for node in state.teams[team_id].board.values():
+        for keys in node.value.requirements.keys():
+            if task in keys.split("|"):
+                if node.value.state == TileState.COMPLETED:
+                    found = node.value.state
+                    continue
+
+                if node.value.state != TileState.UNLOCKED:
+                    continue
+
+                return node.value.state
+
+    return found
+
+
+def get_tile_id_by_task(team_id: int, task: str):
+    found = None
+
+    for tile_id, node in state.teams[team_id].board.items():
+        for keys in node.value.requirements.keys():
+            if task in keys.split("|"):
+                if node.value.state == TileState.COMPLETED:
+                    found = tile_id
+                    continue
+
+                if node.value.state != TileState.UNLOCKED:
+                    continue
+
+                return tile_id
+
+    return found

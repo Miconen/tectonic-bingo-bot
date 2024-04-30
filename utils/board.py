@@ -3,7 +3,7 @@ from typing import List, Dict
 from models.graph import GraphNode
 
 from models.tile import Tile, TileState, TileTheme
-from models.criteria import Count
+from models.criteria import Count, OneOf
 
 neighbor_map: Dict[int, List[int]] = {
     1: [7, 8],
@@ -44,6 +44,7 @@ neighbor_map: Dict[int, List[int]] = {
     36: [32, 33, 34],
 }
 
+
 def generate_board():
     tiles = [
         Tile(
@@ -82,6 +83,31 @@ def generate_board():
             required_for_completetion=1,
             rules_link="https://www.google.com",
         ),
+        Tile(
+            TileState.UNLOCKED,
+            TileTheme.DROPS,
+            {"Scythe": Count(1), "Shadow": Count(1), "Twisted Bow": Count(1)},
+            id=3,
+            image="https://oldschool.runescape.wiki/images/Zamorak_hilt_detail.png",
+            name="Raid Megarare",
+            description="Obtain any megarare raid drop. (Scythe, Twisted Bow, or Shadow)",
+            required_for_completetion=1,
+            rules_link="https://www.google.com",
+        ),
+        Tile(
+            TileState.UNLOCKED,
+            TileTheme.DROPS,
+            {
+                "Scythe": Count(1),
+                "Shadow|Twisted Bow": OneOf({"Shadow": Count(1), "Twisted Bow": Count(1)}),
+            },
+            id=4,
+            image="https://oldschool.runescape.wiki/images/Zamorak_hilt_detail.png",
+            name="Raid Megarare",
+            description="Obtain any megarare raid drop. (Scythe, Twisted Bow, or Shadow)",
+            required_for_completetion=1,
+            rules_link="https://www.google.com",
+        ),
     ]
 
     # Fille the rest of tiles
@@ -101,7 +127,6 @@ def generate_board():
                 rules_link="https://www.google.com",
             )
         )
-
 
     # Generate board connections
     board: Dict[int, GraphNode] = {}

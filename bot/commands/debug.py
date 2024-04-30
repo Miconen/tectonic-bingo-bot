@@ -12,7 +12,7 @@ from state.state import state
 app_commands = discord.app_commands
 
 
-class Debug(commands.Cog):
+class Debug(commands.GroupCog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
