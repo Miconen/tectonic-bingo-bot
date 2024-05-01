@@ -33,16 +33,8 @@ class Submission:
 
 
 async def accept_submission(submission: Submission):
-    if submission.tile.proof is None:
-        return "No proof was submitted with this task."
-
     message = ""
     completion = submission.tile.submit(submission.task, submission.amount)
-
-    # Accept proof
-    submission.tile.proof[submission.proof_index].approved = True
-    submission.tile.proof[submission.proof_index].approved_by = submission.i.user
-    submission.tile.proof[submission.proof_index].approved_at = time()
 
     # If task was not completed
     if not completion:
@@ -87,9 +79,6 @@ async def accept_submission(submission: Submission):
 async def deny_submission(submission: Submission):
     message = ""
 
-    # Remove proof
-    submission.tile.proof = None
-
     # If task was not completed
     if not submission.tile.would_complete_task(submission.task, submission.amount):
         message = "This would have partially completed a task."
@@ -126,6 +115,13 @@ class Buttons(discord.ui.View):
             return
         if not isinstance(self.submission.i.channel, discord.TextChannel):
             return
+        if self.submission.tile.proof is None:
+            return "No proof was submitted with this task."
+
+        # Accept proof
+        self.submission.tile.proof[self.submission.proof_index].approved = True
+        self.submission.tile.proof[self.submission.proof_index].approved_by = i.user
+        self.submission.tile.proof[self.submission.proof_index].approved_at = time()
 
         await i.response.edit_message(
             content=await accept_submission(self.submission), view=None
@@ -138,6 +134,11 @@ class Buttons(discord.ui.View):
             return
         if not isinstance(self.submission.i.channel, discord.TextChannel):
             return
+        if self.submission.tile.proof is None:
+            return "No proof was submitted with this task."
+
+        # Remove proof
+        self.submission.tile.proof = None
 
         if not discord.Permissions(i.permissions.value).administrator:
             return
