@@ -13,6 +13,7 @@ cogs = (
     "bot.commands.tile",
     "bot.commands.submit",
     "bot.commands.teams",
+    "bot.commands.board",
 )
 
 

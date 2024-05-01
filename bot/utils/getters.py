@@ -1,10 +1,10 @@
-from typing import List, Dict
 from random import choice, random
-from models.tile import Criteria, TileState
+from typing import List
+from models.tile import TileState
 from models.team import Team
-from models.criteria import Count
 from utils.board import neighbor_map
 from state.state import state
+from bot.utils.printing import print_requirements, print_requirement_progress
 
 import discord
 
@@ -21,33 +21,6 @@ footer_texts: List[str] = [
     "Free tile for who reads this",
 ]
 
-
-def print_requirements(requirements: Dict[str, Criteria]):
-    res = []
-
-    for key, req in requirements.items():
-        completed = "✅" if req.is_satisfied() else "⬜"
-
-        k = key.split("|")
-        # Formats the key like so: 1, 2, 3, 4 or 5
-        joined_key = k[0] if len(k) == 1 else ", ".join(k[:-1]) + " or " + k[-1]
-
-        if isinstance(req, Count) and req.threshold > 1:
-            res.append(f"{completed} - {joined_key} ({req.count}/{req.threshold})")
-            continue
-
-        res.append(f"{completed} - {joined_key}")
-
-    return "\n".join(res)
-
-
-def print_requirement_progress(tile: Tile):
-    done = 0
-    for req in tile.requirements.values():
-        if req.is_satisfied():
-            done = done + 1
-
-    return f"{done}/{tile.required_for_completetion}"
 
 
 def get_tile_embed(i: discord.Interaction, tile: Tile):

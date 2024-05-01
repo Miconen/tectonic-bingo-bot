@@ -10,12 +10,13 @@ from state.state import state
 from utils.teams import in_team
 from models.tile import TileState, Tile, Proof
 from models.team import Team
-from bot.utils import (
+from bot.utils.getters import (
     get_tile_embed,
     get_submission_message,
     get_tile_state_by_task,
     get_tile_id_by_task,
 )
+from bot.utils.images import images
 
 app_commands = discord.app_commands
 
@@ -45,7 +46,6 @@ async def accept_submission(submission: Submission):
         message = "Task completed! This tile is now completed partially."
 
     # If tile is entirely complete
-    print(f"Would complete? {submission.tile.check_complete()}")
     if submission.tile.check_complete():
         message = "Tile completed! Unlocking new tiles!"
 
@@ -56,6 +56,9 @@ async def accept_submission(submission: Submission):
         new_tiles = submission.team.update_neighboring(
             submission.node, TileState.UNLOCKED, filter=[TileState.COMPLETED]
         )
+
+        # Generate updated board
+        images.generate_image(submission.team.get_id())
 
         for tile in new_tiles:
             embed = get_tile_embed(submission.i, tile)

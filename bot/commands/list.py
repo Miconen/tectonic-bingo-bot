@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from state.state import state
 from utils.teams import in_team
-from bot.utils import get_tile_embed
+from bot.utils.getters import get_tile_embed
 
 app_commands = discord.app_commands
 

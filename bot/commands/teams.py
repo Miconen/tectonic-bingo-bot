@@ -5,7 +5,8 @@ from state.state import state
 from models.team import Team
 from models.tile import TileState
 from utils.board import generate_board
-from bot.utils import get_by_state
+from bot.utils.getters import get_by_state
+from bot.utils.images import images
 
 
 app_commands = discord.app_commands
@@ -29,6 +30,7 @@ class Teams(commands.GroupCog):
 
         # Check if the role is already a team
         state.teams[role.id] = Team(role, generate_board())
+        images.generate_image(role.id)
         await i.response.send_message(f"Added {role} as a team.")
         return
 
@@ -41,6 +43,7 @@ class Teams(commands.GroupCog):
             return
 
         state.teams.pop(role.id)
+        images.remove_image(role.id)
         await i.response.send_message(f"Removed {role} from teams.")
         return
 

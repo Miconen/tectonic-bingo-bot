@@ -18,6 +18,9 @@ class Team(object):
     def get_name(self):
         return self.role.name
 
+    def get_id(self):
+        return self.role.id
+
     def update_neighboring(self, node: GraphNode, new_state: TileState, filter: List[TileState] | None = None):
         """Update the state of neighboring tiles of a given tile. Returning the updated tiles."""
         result: List[Tile] = []
