@@ -1,7 +1,7 @@
 import discord
 from typing import Dict, Tuple, List
 from dataclasses import dataclass
-from PIL import Image, ImageDraw, ImageColor
+from PIL import Image, ImageDraw
 from io import BytesIO
 import requests
 
@@ -10,12 +10,15 @@ from state.state import state
 from utils.board import neighbor_map
 
 COORDINATES: Dict[int, Tuple[int, int]] = {
+    # Middle tiles
     1: (600, 32),
     2: (600, 184),
     3: (600, 465),
     4: (600, 592),
     5: (600, 719),
     6: (600, 1050),
+
+    # Side tiles
     7: (447, 160),
     8: (752, 160),
     9: (219, 211),
