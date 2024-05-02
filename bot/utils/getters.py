@@ -41,6 +41,11 @@ def get_tile_embed(i: discord.Interaction, tile: Tile):
         value=", ".join(f"#{str(n)}" for n in neighbor_map[tile.id]),
         inline=False,
     )
+    embed.add_field(
+        name=f"Info",
+        value="`/board` to see the updated board.\n`/list` to see all unlocked tiles.",
+        inline=False,
+    )
     embed.set_footer(text=footer_text).timestamp = i.created_at
 
     return embed
