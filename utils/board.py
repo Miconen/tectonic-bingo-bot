@@ -110,8 +110,8 @@ def generate_board():
         ),
     ]
 
-    # Fille the rest of tiles
-    for i in range(len(tiles) + 1, 36):
+    # Fill the rest of tiles
+    for i in range(len(tiles) - 1, 37):
         tiles.append(
             Tile(
                 TileState.LOCKED,
