@@ -15,7 +15,6 @@ class Count(Criteria):
         return self.count >= self.threshold
 
     def submit(self, inc: int, key: str) -> bool:
-        print(f"Received Count submission for {key} with {inc} increment.")
         self.count += inc
         return self.is_satisfied()
 

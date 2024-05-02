@@ -144,7 +144,6 @@ class Tile:
         """Submit a requirement to unlock the task."""
         done = False
 
-        print(f"Received submission for {key} with {amount} increment.")
         for k in self.requirements.keys():
             if key in k.split("|"):
                 done = self.requirements[k].submit(amount, key)
