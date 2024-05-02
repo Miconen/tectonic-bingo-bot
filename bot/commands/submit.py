@@ -104,8 +104,8 @@ async def deny_submission(submission: Submission):
 
 
 class Buttons(discord.ui.View):
-    def __init__(self, submission: Submission, timeout=180):
-        super().__init__(timeout=timeout)
+    def __init__(self, submission: Submission):
+        super().__init__()
         self.submission = submission
 
     @discord.ui.button(

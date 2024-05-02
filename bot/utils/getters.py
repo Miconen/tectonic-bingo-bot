@@ -32,7 +32,7 @@ def get_tile_embed(i: discord.Interaction, tile: Tile):
     embed.set_thumbnail(url=tile.image)
     embed.add_field(name="Description", value=tile.description, inline=False)
     embed.add_field(
-        name=f"Tasks ({print_requirement_progress(tile)})",
+        name=f"Tasks for completion: ({print_requirement_progress(tile)})",
         value=print_requirements(tile.requirements),
         inline=False,
     )

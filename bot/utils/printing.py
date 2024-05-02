@@ -1,6 +1,6 @@
-from typing import Dict
+from typing import Dict, List
+from models.criteria import Some, Count
 from models.tile import Criteria
-from models.criteria import Count
 from models.tile import Tile
 
 
@@ -10,17 +10,39 @@ def print_requirements(requirements: Dict[str, Criteria]):
     for key, req in requirements.items():
         completed = "✅" if req.is_satisfied() else "⬜"
 
-        k = key.split("|")
-        # Formats the key like so: 1, 2, 3, 4 or 5
-        joined_key = k[0] if len(k) == 1 else ", ".join(k[:-1]) + " or " + k[-1]
+        if isinstance(req, Some):
+            group_title = f"{completed} **Complete {req.threshold} of the following**"
+            res.append(group_title)
 
-        if isinstance(req, Count) and req.threshold > 1:
-            res.append(f"{completed} - {joined_key} ({req.count}/{req.threshold})")
-            continue
+            for k, v in req.criteria.items():
+                c = "✅" if v.is_satisfied() else "⬜"
+                s = get_req_string(k, v, c)
+                res.append(s)
 
-        res.append(f"{completed} - {joined_key}")
+        if isinstance(req, Count):
+            group_title = f"{completed} **Complete the following**"
+            res.append(group_title)
+
+            s = get_req_string(key, req, completed)
+            res.append(s)
+
+        res.append("")
 
     return "\n".join(res)
+
+
+def get_req_string(string: str, criteria: Criteria, status: str):
+    req_base = "\u1CBC\u1CBC\u1CBC{} {}{}"
+
+    return req_base.format(
+        status,
+        string,
+        (
+            f" ({criteria.get_count()}/{criteria.threshold})"
+            if criteria.threshold > 1
+            else ""
+        ),
+    )
 
 
 def print_requirement_progress(tile: Tile):

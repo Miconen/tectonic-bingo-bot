@@ -71,6 +71,8 @@ class TileTheme(Enum):
 
 
 class Criteria(ABC):
+    threshold: int
+
     @abstractmethod
     def is_satisfied(self) -> bool:
         pass
@@ -81,6 +83,10 @@ class Criteria(ABC):
 
     @abstractmethod
     def would_complete(self, inc: int, key: str) -> bool:
+        pass
+
+    @abstractmethod
+    def get_count(self) -> int:
         pass
 
 

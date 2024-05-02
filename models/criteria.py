@@ -1,4 +1,5 @@
 from typing import Dict
+from functools import reduce
 
 from models.tile import Criteria
 
@@ -24,14 +25,17 @@ class Count(Criteria):
         """
         return self.count + inc >= self.threshold
 
+    def get_count(self) -> int:
+        return self.count
 
-class OneOf(Criteria):
+
+class Some(Criteria):
     criteria: Dict[str, Criteria]
-    required_for_completion: int
+    threshold: int
 
     def __init__(self, criteria: Dict[str, Criteria], required: int = 1):
         self.criteria = criteria
-        self.required_for_completion = required
+        self.threshold = required
 
     def is_satisfied(self) -> bool:
         count = 0
@@ -39,7 +43,7 @@ class OneOf(Criteria):
             if criteria.is_satisfied():
                 count += 1
 
-        return count >= self.required_for_completion
+        return count >= self.threshold
 
     def submit(self, inc: int, key: str) -> bool:
         for k, criteria in self.criteria.items():
@@ -61,4 +65,7 @@ class OneOf(Criteria):
                 count += 1
                 continue
 
-        return count >= self.required_for_completion
+        return count >= self.threshold
+
+    def get_count(self) -> int:
+        return reduce(lambda acc, elem: acc + int(elem.is_satisfied()), self.criteria.values(), 0)

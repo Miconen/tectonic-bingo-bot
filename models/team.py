@@ -31,6 +31,9 @@ class Team(object):
             if filter and tile.value.state in filter:
                 continue
 
+            if any(tile.value.id == res.id for res in result):
+                continue
+
             tile.value.state = new_state
             result.append(tile.value)
 
