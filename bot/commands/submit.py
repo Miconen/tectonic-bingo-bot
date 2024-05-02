@@ -11,7 +11,7 @@ from utils.teams import in_team
 from models.tile import TileState, Tile, Proof
 from models.team import Team
 from bot.utils.getters import (
-    get_tile_embed,
+    get_unlock_embed,
     get_submission_message,
     get_tile_state_by_task,
     get_tile_id_by_task,
@@ -60,14 +60,13 @@ async def accept_submission(submission: Submission):
         # Generate updated board
         images.generate_image(submission.team.get_id())
 
-        for tile in new_tiles:
-            embed = get_tile_embed(submission.i, tile)
-            # Check if is text channel
-            if submission.i.channel is None:
-                return
-            if not isinstance(submission.i.channel, discord.TextChannel):
-                return
-            await submission.i.channel.send("**New tile unlocked!**", embed=embed)
+        embed = get_unlock_embed(submission.i, submission.team, new_tiles)
+        # Check if is text channel
+        if submission.i.channel is None:
+            return
+        if not isinstance(submission.i.channel, discord.TextChannel):
+            return
+        await submission.i.channel.send(embed=embed)
 
     return get_submission_message(
         submission.i,
@@ -246,7 +245,7 @@ class Submit(commands.Cog):
         if submission.tile.would_complete_tile(task, amount):
             message = "This would complete the tile, unlocking new tiles."
 
-        msg = await i.channel.send(
+        msg = await i.response.send_message(
             get_submission_message(
                 i, submission.tile, message, "⌛ Pending approval...", amount, task
             ),
