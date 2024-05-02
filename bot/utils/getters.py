@@ -22,7 +22,6 @@ footer_texts: List[str] = [
 ]
 
 
-
 def get_tile_embed(i: discord.Interaction, tile: Tile):
     # Add a 5% chance for an easter egg in the footer text
     footer_text = choice(footer_texts) if random() < 0.05 else "Tectonic"
@@ -46,12 +45,53 @@ def get_tile_embed(i: discord.Interaction, tile: Tile):
 
     return embed
 
+
+def get_tiles_embed(i: discord.Interaction, team: Team, tiles: List[Tile]):
+    # Add a 10% chance for an easter egg in the footer text
+    footer_text = choice(footer_texts) if random() < 0.1 else "Tectonic"
+
+    embed = discord.Embed(
+        title=f"Unlocked tiles for {team.get_name()}", color=discord.Color.red()
+    )
+    embed.set_thumbnail(
+        url="https://cdn.discordapp.com/icons/979445890064470036/70b3e59890b25b8f1418e32ce32650de.webp"
+    )
+
+    embed.add_field(
+        name="Current progress",
+        value=f"Unlocked tiles: {len(get_by_state(TileState.UNLOCKED, team))}\nCompleted tiles: {len(get_by_state(TileState.COMPLETED, team))}",
+        inline=False,
+    )
+
+    tile_list: List[str] = []
+    for tile in tiles:
+        tile_list.append(f"#{tile.id} - **{tile.name}**")
+
+    embed.add_field(
+        name=f"Unlocked tiles",
+        value="\n".join(tile_list),
+        inline=False,
+    )
+
+    embed.add_field(
+        name=f"Info",
+        value="`/board` to see the updated board.\n`/tile <id>` to see a specific tile.",
+        inline=False,
+    )
+
+    embed.set_footer(text=footer_text).timestamp = i.created_at
+
+    return embed
+
+
 def get_unlock_embed(i: discord.Interaction, team: Team, tiles: List[Tile]):
     # Add a 10% chance for an easter egg in the footer text
     footer_text = choice(footer_texts) if random() < 0.1 else "Tectonic"
 
     embed = discord.Embed(title="New tiles unlocked!", color=discord.Color.red())
-    embed.set_thumbnail(url="https://cdn.discordapp.com/icons/979445890064470036/70b3e59890b25b8f1418e32ce32650de.webp")
+    embed.set_thumbnail(
+        url="https://cdn.discordapp.com/icons/979445890064470036/70b3e59890b25b8f1418e32ce32650de.webp"
+    )
 
     unlocks: List[str] = []
     for tile in tiles:

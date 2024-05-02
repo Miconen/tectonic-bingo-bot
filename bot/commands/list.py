@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from state.state import state
 from utils.teams import in_team
-from bot.utils.getters import get_tile_embed
+from bot.utils.getters import get_tiles_embed
 
 app_commands = discord.app_commands
 
@@ -36,11 +36,9 @@ class List(commands.Cog):
             node.value for node in board.values() if node.value.is_unlocked()
         ]
 
-        for tile in unlocked_tiles:
-            embed = get_tile_embed(i, tile)
-            await i.channel.send(embed=embed)
+        embed = get_tiles_embed(i, state.teams[team], unlocked_tiles)
 
-        await i.response.send_message(f"Listing all unlocked tiles for team: **{state.teams[team].role.name}**")
+        await i.response.send_message(embed=embed)
 
 
 async def setup(bot: commands.Bot) -> None:
