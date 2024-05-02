@@ -42,7 +42,6 @@ class OneOf(Criteria):
         return count >= self.required_for_completion
 
     def submit(self, inc: int, key: str) -> bool:
-        print(f"Received OneOf submission for {key} with {inc} increment.")
         for k, criteria in self.criteria.items():
             if k == key:
                 return criteria.submit(inc, key)
