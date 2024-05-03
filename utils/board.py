@@ -48,18 +48,15 @@ neighbor_map: Dict[int, List[int]] = {
 def generate_board():
     tiles = [
         Tile(
-            TileState.LOCKED,
-            TileTheme.MINIGAMES,
-            {"Fang": Count(1), "Purple Sweets": Count(100)},
-            id=1,
-            image="https://oldschool.runescape.wiki/images/Zamorak_hilt_detail.png",
-            name="Tile with multiple requirements",
+            TileTheme.MISCELLANEOUS,
+            {"Purple Sweets": Count(100)},
+            id=18,
+            image="https://oldschool.runescape.wiki/images/Purple_sweets_detail.png",
+            name="Clue tile",
             description="This is a description of the tile. It has multiple requirements.",
-            required_for_completetion=2,
         ),
         Tile(
-            TileState.UNLOCKED,
-            TileTheme.DROPS,
+            TileTheme.MISCELLANEOUS,
             {
                 "Odium 1|Malediction 1": Some(
                     {"Odium 1": Count(1), "Malediction 1": Count(1)},
@@ -71,18 +68,14 @@ def generate_board():
                     {"Odium 3": Count(1), "Malediction 3": Count(1)},
                 ),
             },
-            id=2,
-            image="https://oldschool.runescape.wiki/images/Zamorak_hilt_detail.png",
-            name="Slayer tile",
-            description="""
-                Obtain 5 unique slayer related drops. You may obtain multiple different uniques from the same boss (no dupes). Only the uniques listed below will count towards the tile.
-            """,
+            id=16,
+            image="https://oldschool.runescape.wiki/images/Malediction_ward_detail.png",
+            name="Wilderness Shield",
+            description="Obtain wildy shield fragments 1, 2, & 3. Each fragment can be from either of the shields I.e malediction shard 1, odium shard 2, odium shard 3.",
             required_for_completetion=3,
-            rules_link="https://www.google.com",
         ),
         Tile(
-            TileState.UNLOCKED,
-            TileTheme.DROPS,
+            TileTheme.RAIDS,
             {
                 "Cursed phalanx|Holy ornament kit|Sanguine ornament kit": Some(
                     {
@@ -97,56 +90,78 @@ def generate_board():
                     {"Metamorphic dust": Count(1), "Sanguine dust": Count(1)}
                 ),
             },
-            id=3,
+            id=5,
             image="https://oldschool.runescape.wiki/images/Zamorak_hilt_detail.png",
-            name="Locked by default tile",
-            description="""
-                Obtain 5 unique slayer related drops. You may obtain multiple different uniques from the same boss (no dupes). Only the uniques listed below will count towards the tile.
-            """,
-            required_for_completetion=1,
-            rules_link="https://www.google.com",
+            name="Hard Modes",
+            description="Mix of all possible hard mode raid drops.",
         ),
         Tile(
-            TileState.UNLOCKED,
-            TileTheme.DROPS,
+            TileTheme.MISCELLANEOUS,
             {
-                "Scythe": Count(2),
-                "Shadow|Twisted Bow": Some(
-                    {"Shadow": Count(1), "Twisted Bow": Count(1)}
-                ),
+                "Scythe of Vitur": Count(1),
+                "Tumeken's Shadow": Count(1),
+                "Twisted Bow": Count(1),
             },
+            state=TileState.UNLOCKED,
             id=4,
             image="https://oldschool.runescape.wiki/images/Zamorak_hilt_detail.png",
             name="Raid Megarare",
             description="Obtain any megarare raid drop. (Scythe, Twisted Bow, or Shadow)",
-            required_for_completetion=1,
-            rules_link="https://www.google.com",
+        ),
+        Tile(
+            TileTheme.HARD,
+            {
+                "Infernal Cape": Count(5),
+            },
+            id=10,
+            image="https://oldschool.runescape.wiki/images/Infernal_cape_detail.png",
+            name="Inferno",
+            description="TBD: Something inferno related",
+        ),
+        Tile(
+            TileTheme.HARD,
+            {
+                "Torva platebody|Torva plaelegs|Torva helmet|Ancient hilt|Nihil horn": Count(
+                    2
+                ),
+            },
+            id=9,
+            image="https://oldschool.runescape.wiki/images/Torva_full_helm_detail.png",
+            name="Nex",
+            description="TBD: Something Nex related",
+        ),
+        Tile(
+            TileTheme.HARD,
+            {
+                "Sunfire splinter": Count(150000),
+            },
+            id=6,
+            image="https://oldschool.runescape.wiki/images/Sunfire_splinters_4_detail.png",
+            name="Blessings of Ralos",
+            description="TBD: Sunfire splinters",
         ),
     ]
 
     # Fill the rest of tiles
-    for i in range(len(tiles) - 1, 37):
-        tiles.append(
-            Tile(
-                TileState.LOCKED,
-                TileTheme.DROPS,
-                {f"Tile {i} req": Count(1)},
-                id=i,
-                image="https://oldschool.runescape.wiki/images/Zamorak_hilt_detail.png",
-                name="Autogenerated tile",
-                description="""
-                    This tile was autogenerated for testing purposes just to fill the whole board.
-                """,
-                required_for_completetion=1,
-                rules_link="https://www.google.com",
-            )
+    tile_dict = {tile.id: tile for tile in tiles}
+    for i in range(1, 37):
+        if i in tile_dict:
+            continue
+
+        tile_dict[i] = Tile(
+            TileTheme.MISCELLANEOUS,
+            {f"Autogenerated {i}": Count(1)},
+            id=i,
+            image="https://oldschool.runescape.wiki/images/Cake_of_guidance_detail.png",
+            name="Autogenerated tile",
+            description="This tile was autogenerated for testing purposes just to fill the whole board.",
         )
 
     # Generate board connections
     board: Dict[int, GraphNode] = {}
-    for tile in tiles:
-        node = board.setdefault(tile.id, GraphNode(tile))
-        for n in neighbor_map[tile.id]:
+    for key, tile in tile_dict.items():
+        node = board.setdefault(key, GraphNode(tile))
+        for n in neighbor_map[key]:
             node.add_neighbor(n)
 
     return board

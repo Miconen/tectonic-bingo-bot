@@ -1,7 +1,7 @@
 import discord
 from typing import Dict, Tuple, List
 from dataclasses import dataclass
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 import requests
 
@@ -17,7 +17,6 @@ COORDINATES: Dict[int, Tuple[int, int]] = {
     4: (600, 592),
     5: (600, 719),
     6: (600, 1050),
-
     # Side tiles
     7: (447, 160),
     8: (752, 160),
@@ -122,23 +121,36 @@ class ImageState:
 
         # Resize the image back to original size with antialiasing
         image = temp_image.resize((1300, 1300), Image.Resampling.LANCZOS)
+        draw = ImageDraw.Draw(image)
+
+        # Font setup
+        font_size = 56
+        font = ImageFont.truetype("FreeMono.ttf", font_size)
 
         for tile in tiles:
             if tile.id not in COORDINATES.keys():
                 continue
 
-            if tile.state == TileState.UNKNOWN or tile.state == TileState.LOCKED:
-                red = (tile.theme.value >> 16) & 0xFF
-                green = (tile.theme.value >> 8) & 0xFF
-                blue = tile.theme.value & 0xFF
+            red = (tile.theme.value >> 16) & 0xFF
+            green = (tile.theme.value >> 8) & 0xFF
+            blue = tile.theme.value & 0xFF
 
-                hidden = Image.new("RGB", (100, 100), (red, green, blue))
-                image.paste(hidden, COORDINATES[tile.id])
+            tile_background = Image.new("RGB", (100, 100), (red, green, blue))
+
+            image.paste(tile_background, COORDINATES[tile.id])
+            draw.text(
+                COORDINATES[tile.id],
+                str(tile.id),
+                font=font,
+                fill="black",
+            )
+
+            if tile.state == TileState.LOCKED:
                 continue
 
             # Fetch the image from the URL and resize it to 100x100
             response = requests.get(tile.image, stream=True)
-            tile_image = Image.open(response.raw).resize((100, 100))
+            tile_image = Image.open(response.raw).resize((92, 92))
 
             if tile.state == TileState.COMPLETED:
                 accepted_overlay = Image.new("RGBA", tile_image.size, accepted_color)
@@ -146,7 +158,9 @@ class ImageState:
                     tile_image.convert("RGBA"), accepted_overlay
                 )
 
-            image.paste(tile_image, COORDINATES[tile.id])
+            image.paste(
+                tile_image, tuple(coordinate + 4 for coordinate in COORDINATES[tile.id])
+            )
 
         self.set_image(team_id, image)
         return self.get_image(team_id)

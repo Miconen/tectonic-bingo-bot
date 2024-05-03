@@ -63,11 +63,10 @@ class TileState(Enum):
 
 class TileTheme(Enum):
     SKILLING = Color.LIGHTBLUE.value
-    CA = Color.RED.value
-    DROPS = Color.ORANGE.value
-    PVM = Color.YELLOW.value
-    MINIGAMES = Color.PURPLE.value
-    MISCELLANEOUS = Color.WHITE.value
+    CHALLENGE = Color.PURPLE.value
+    HARD = Color.RED.value
+    RAIDS = Color.YELLOW.value
+    MISCELLANEOUS = Color.ORANGE.value
 
 
 class Criteria(ABC):
@@ -113,10 +112,10 @@ class Proof:
 
 @dataclass
 class Tile:
-    state: TileState
     theme: TileTheme
     requirements: Dict[str, Criteria]
     id: int = 0
+    state: TileState = TileState.LOCKED
     image: str = ""
     name: str = ""
     description: str = ""
