@@ -58,16 +58,26 @@ def generate_board():
             required_for_completetion=2,
         ),
         Tile(
-            TileState.LOCKED,
+            TileState.UNLOCKED,
             TileTheme.DROPS,
-            {"Shadow": Count(1)},
+            {
+                "Odium 1|Malediction 1": Some(
+                    {"Odium 1": Count(1), "Malediction 1": Count(1)},
+                ),
+                "Odium 2|Malediction 2": Some(
+                    {"Odium 2": Count(1), "Malediction 2": Count(1)},
+                ),
+                "Odium 3|Malediction 3": Some(
+                    {"Odium 3": Count(1), "Malediction 3": Count(1)},
+                ),
+            },
             id=2,
             image="https://oldschool.runescape.wiki/images/Zamorak_hilt_detail.png",
             name="Slayer tile",
             description="""
                 Obtain 5 unique slayer related drops. You may obtain multiple different uniques from the same boss (no dupes). Only the uniques listed below will count towards the tile.
             """,
-            required_for_completetion=1,
+            required_for_completetion=3,
             rules_link="https://www.google.com",
         ),
         Tile(
