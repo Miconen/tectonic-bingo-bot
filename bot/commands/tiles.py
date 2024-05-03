@@ -8,7 +8,7 @@ from bot.utils.getters import get_tiles_embed
 app_commands = discord.app_commands
 
 
-class List(commands.Cog):
+class Tiles(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -16,15 +16,17 @@ class List(commands.Cog):
     async def on_ready(self):
         print("List command is ready.")
 
-    @app_commands.command(name="list", description="List all unlocked tiles")
-    async def list(self, i: discord.Interaction):
+    @app_commands.command(name="tiles", description="List all unlocked tiles")
+    async def tiles(self, i: discord.Interaction):
         """List all unlocked tiles."""
         if i.channel is None:
             return
         if not isinstance(i.channel, discord.TextChannel):
             return
+        if not isinstance(i.user, discord.Member):
+            return
 
-        team = in_team(i.user.id, state.teams)
+        team = in_team(i.user, state.teams)
         if team is None:
             await i.response.send_message(
                 f"You are not in a team (Teams: {len(state.teams)})"
@@ -42,4 +44,4 @@ class List(commands.Cog):
 
 
 async def setup(bot: commands.Bot) -> None:
-    await bot.add_cog(List(bot))
+    await bot.add_cog(Tiles(bot))

@@ -8,7 +8,7 @@ intents.members = True
 bot = commands.Bot(command_prefix=commands.when_mentioned, intents=intents)
 
 cogs = (
-    "bot.commands.list",
+    "bot.commands.tiles",
     "bot.commands.debug",
     "bot.commands.tile",
     "bot.commands.submit",

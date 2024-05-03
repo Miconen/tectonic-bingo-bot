@@ -28,11 +28,13 @@ class Teams(commands.GroupCog):
             await i.response.send_message(f"{role} is already a team.")
             return
 
-        # Check if the role is already a team
-        state.teams[role.id] = Team(role, generate_board())
+        state.add_team(Team(role, generate_board()))
         images.generate_image(role.id)
+
         await i.response.send_message(f"Added {role} as a team.")
-        return
+
+        # Save the game state
+        state.serialize()
 
     @app_commands.command(name="remove", description="Remove a team based on a role.")
     @commands.has_permissions(manage_roles=True)
@@ -42,10 +44,13 @@ class Teams(commands.GroupCog):
             await i.response.send_message(f"{role} is not a team.")
             return
 
-        state.teams.pop(role.id)
+        state.remove_team(role.id)
         images.remove_image(role.id)
+
         await i.response.send_message(f"Removed {role} from teams.")
-        return
+
+        # Save the game state
+        state.serialize()
 
     @app_commands.command(name="list", description="List all teams.")
     @commands.has_permissions(manage_roles=True)
@@ -57,11 +62,11 @@ class Teams(commands.GroupCog):
 
         teams = "\n".join(
             [
-                f"**Team:** {team.role.name} - **Tiles:** {len(get_by_state(TileState.COMPLETED, team))}"
+                f"**Team:** <@&{team.get_id()}> - **Tiles:** {len(get_by_state(TileState.COMPLETED, team))}"
                 for team in state.teams.values()
             ]
         )
-        await i.response.send_message(f"# Teams / Roles\n{teams}")
+        await i.response.send_message(f"# Teams / Roles\n{teams}", silent=True)
 
 
 async def setup(bot: commands.Bot) -> None:

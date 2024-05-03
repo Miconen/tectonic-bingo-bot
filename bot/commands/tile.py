@@ -26,8 +26,10 @@ class Tile(commands.Cog):
             return
         if not isinstance(i.channel, discord.TextChannel):
             return
+        if not isinstance(i.user, discord.Member):
+            return
 
-        team = in_team(i.user.id, state.teams)
+        team = in_team(i.user, state.teams)
 
         if team is None:
             await i.response.send_message(f"You are not in a bingo team")
@@ -45,7 +47,7 @@ class Tile(commands.Cog):
 
         if tile is None:
             await i.response.send_message(
-                f"No tile unlocked with ID #{tile_id} for team ({state.teams[team].role.name})"
+                f"No tile unlocked with ID #{tile_id} for team ({state.teams[team].get_name()})"
             )
             return
 

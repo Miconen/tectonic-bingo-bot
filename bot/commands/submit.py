@@ -122,12 +122,15 @@ class Buttons(discord.ui.View):
 
         # Accept proof
         self.submission.tile.proof[self.submission.proof_index].approved = True
-        self.submission.tile.proof[self.submission.proof_index].approved_by = i.user
+        self.submission.tile.proof[self.submission.proof_index].approved_by = i.user.id
         self.submission.tile.proof[self.submission.proof_index].approved_at = time()
 
         await i.response.edit_message(
             content=await accept_submission(self.submission), view=None
         )
+
+        # Save the game state
+        state.serialize()
 
     @discord.ui.button(custom_id="deny", label="Deny", style=discord.ButtonStyle.red)
     @commands.has_permissions(manage_roles=True)
@@ -148,6 +151,9 @@ class Buttons(discord.ui.View):
         await i.response.edit_message(
             content=await deny_submission(self.submission), view=None
         )
+
+        # Save the game state
+        state.serialize()
 
 
 class Submit(commands.Cog):
@@ -176,8 +182,10 @@ class Submit(commands.Cog):
             return
         if not isinstance(i.channel, discord.TextChannel):
             return
+        if not isinstance(i.user, discord.Member):
+            return
 
-        team = in_team(i.user.id, state.teams)
+        team = in_team(i.user, state.teams)
         if team is None:
             res = f"You are not in a bingo team, if you think this is a mistake, please contact an admin"
             return await i.response.send_message(res, ephemeral=True)
@@ -189,12 +197,12 @@ class Submit(commands.Cog):
             return await i.response.send_message(res)
 
         if status != TileState.UNLOCKED:
-            res = f"{task} is not a part of an unlocked tile for team: {state.teams[team].role.name}"
+            res = f"{task} is not a part of an unlocked tile for team: {state.teams[team].get_name()}"
             return await i.response.send_message(res)
 
         task_tile_id = get_tile_id_by_task(team, task)
         if task_tile_id is None:
-            res = f"{task} is not a part of an unlocked tile for team: {state.teams[team].role.name}"
+            res = f"{task} is not a part of an unlocked tile for team: {state.teams[team].get_name()}"
             return await i.response.send_message(res)
 
         # If proof MIME type not of image/jppeg or image/png return
@@ -217,7 +225,8 @@ class Submit(commands.Cog):
         if tile.proof is None:
             tile.proof = []
 
-        tile.proof.append(Proof(False, task, amount, time(), i.user))
+        # Initialize boilerplate proof
+        tile.proof.append(Proof(False, task, amount, time(), i.user.id))
         index = tile.proof.index(tile.proof[-1])
 
         submission = Submission(
@@ -245,7 +254,9 @@ class Submit(commands.Cog):
         if submission.tile.would_complete_tile(task, amount):
             message = "This would complete the tile, unlocking new tiles."
 
-        msg = await i.response.send_message(
+        await i.response.send_message("Proof submited!", ephemeral=True, delete_after=10)
+
+        msg = await i.channel.send(
             get_submission_message(
                 i, submission.tile, message, "⌛ Pending approval...", amount, task
             ),
@@ -256,7 +267,10 @@ class Submit(commands.Cog):
         )
 
         if submission.tile.proof is not None:
-            submission.tile.proof[index].message = msg
+            submission.tile.proof[index].message = msg.jump_url
+
+        # Save the game state
+        state.serialize()
 
 
 async def get_proof_file(proof: discord.Attachment) -> BytesIO | Exception:

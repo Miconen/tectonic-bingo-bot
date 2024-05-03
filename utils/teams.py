@@ -1,12 +1,12 @@
 from typing import Dict
-from state.state import Team
+import discord
+
+from models.team import Team
 
 
-def in_team(user_id: int, teams: Dict[int, Team]):
-    # Get teams[team].name that the user belongs in
-    for team in teams.values():
-        for member in team.role.members:
-            if user_id != member.id:
-                continue
+def in_team(user: discord.Member, teams: Dict[int, Team]):
+    team_ids = teams.keys()
 
-            return team.role.id
+    for role in user.roles:
+        if role.id in team_ids:
+            return role.id

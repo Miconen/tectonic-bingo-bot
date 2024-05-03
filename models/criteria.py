@@ -4,7 +4,7 @@ from functools import reduce
 from models.tile import Criteria
 
 
-class Count(Criteria):
+class Count(Criteria, object):
     threshold: int
     count: int
 
@@ -29,7 +29,7 @@ class Count(Criteria):
         return self.count
 
 
-class Some(Criteria):
+class Some(Criteria, object):
     criteria: Dict[str, Criteria]
     threshold: int
 

@@ -43,16 +43,24 @@ class Debug(commands.GroupCog):
     async def proof(
         self,
         i: discord.Interaction,
-        team: discord.Role,
+        role: discord.Role,
         tile_id: app_commands.Range[int, 1, 36],
     ):
         """Get the submitted proof of a tile."""
-        tile = state.teams[team.id].board[tile_id].value
+        team = state.get_team(role.id)
+
+        if team is None:
+            res = f"Team for role <@&{role.id}> not found"
+            return await i.response.send_message(res)
+
+        tile = team.get_tile(tile_id)
+        if tile is None:
+            res = f"Tile #{tile_id} not found for team {role.name}"
+            return await i.response.send_message(res)
 
         if tile.proof is None:
-            return await i.response.send_message(
-                f"No proof submitted for tile {tile_id}."
-            )
+            res = f"No proof submitted for tile #{tile_id}"
+            return await i.response.send_message(res)
 
         msg = f"# Proof check for tile {tile_id}"
         proofs = []
@@ -60,17 +68,17 @@ class Debug(commands.GroupCog):
         for proof in tile.proof:
             res = ""
 
-            res += f"\n**Team:** {team.name}"
+            res += f"\n**Team:** {role.name}"
             res += f"\n**Task:** {proof.amount}x {proof.task}"
-            res += f"\n**Submitted:** {proof.submitted_by.display_name} {get_relative_time(TimestampType.DATE_TIME_SHORT, proof.submitted_at)} ({get_relative_time(TimestampType.RELATIVE, proof.submitted_at)})"
+            res += f"\n**Submitted:** <@{proof.submitted_by}> {get_relative_time(TimestampType.DATE_TIME_SHORT, proof.submitted_at)} ({get_relative_time(TimestampType.RELATIVE, proof.submitted_at)})"
             if proof.approved_at is not None and proof.approved_by is not None:
-                res += f"\n**Approved:** {proof.approved_by.display_name} {get_relative_time(TimestampType.DATE_TIME_SHORT, proof.approved_at)} ({get_relative_time(TimestampType.RELATIVE, proof.approved_at)})"
+                res += f"\n**Approved:** <@{proof.approved_by}> {get_relative_time(TimestampType.DATE_TIME_SHORT, proof.approved_at)} ({get_relative_time(TimestampType.RELATIVE, proof.approved_at)})"
             if proof.message is not None:
-                res += f"\n**Message:** {proof.message.jump_url}"
+                res += f"\n**Message:** {proof.message}"
 
             proofs.append(res)
 
-        await i.response.send_message(msg + "\n".join(proofs))
+        await i.response.send_message(msg + "\n".join(proofs), silent=True)
 
 
 async def setup(bot: commands.Bot) -> None:

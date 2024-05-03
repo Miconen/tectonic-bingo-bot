@@ -23,13 +23,15 @@ class Board(commands.Cog):
             return
         if not isinstance(i.channel, discord.TextChannel):
             return
+        if not isinstance(i.user, discord.Member):
+            return
 
-        team = in_team(i.user.id, state.teams)
+        team = in_team(i.user, state.teams)
         if team is None:
             res = f"You are not in a bingo team, if you think this is a mistake, please contact an admin"
             return await i.response.send_message(res, ephemeral=True)
 
-        team_name = state.teams[team].role.name
+        team_name = state.teams[team].get_name()
 
         image = images.get_image(team)
         if not image:

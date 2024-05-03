@@ -105,6 +105,7 @@ class ImageState:
 
         # Create a new image with higher resolution
         temp_size = (1300 * 2, 1300 * 2)
+
         temp_image = Image.new("RGB", temp_size, (255, 255, 255))
         draw = ImageDraw.Draw(temp_image)
 
@@ -124,7 +125,7 @@ class ImageState:
         draw = ImageDraw.Draw(image)
 
         # Font setup
-        font_size = 56
+        font_size = 30
         font = ImageFont.truetype("FreeMono.ttf", font_size)
 
         for tile in tiles:
@@ -139,10 +140,10 @@ class ImageState:
 
             image.paste(tile_background, COORDINATES[tile.id])
             draw.text(
-                COORDINATES[tile.id],
+                tuple(coordinate + 5 for coordinate in COORDINATES[tile.id]),
                 str(tile.id),
                 font=font,
-                fill="black",
+                fill="white",
             )
 
             if tile.state == TileState.LOCKED:

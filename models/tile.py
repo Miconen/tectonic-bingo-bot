@@ -104,10 +104,10 @@ class Proof:
     task: str
     amount: int
     submitted_at: float
-    submitted_by: discord.Member | discord.User
-    message: discord.Message | None = None
+    submitted_by: int
+    message: str | None = None
     approved_at: float | None = None
-    approved_by: discord.Member | discord.User | None = None
+    approved_by: int | None = None
 
 
 @dataclass
