@@ -98,12 +98,22 @@ def generate_board():
         Tile(
             TileTheme.MISCELLANEOUS,
             {
+                "Chef's hat": Count(1),
+            },
+            state=TileState.UNLOCKED,
+            id=4,
+            image="https://oldschool.runescape.wiki/images/Chef's_hat_detail.png",
+            name="Let them cook",
+            description="To kick it off, obtain a chef's hat.",
+        ),
+        Tile(
+            TileTheme.MISCELLANEOUS,
+            {
                 "Scythe of Vitur": Count(1),
                 "Tumeken's Shadow": Count(1),
                 "Twisted Bow": Count(1),
             },
-            state=TileState.UNLOCKED,
-            id=4,
+            id=34,
             image="https://oldschool.runescape.wiki/images/Zamorak_hilt_detail.png",
             name="Raid Megarare",
             description="Obtain any megarare raid drop. (Scythe, Twisted Bow, or Shadow)",
