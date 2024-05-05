@@ -45,6 +45,16 @@ class Team(object):
             if any(tile.value.id == res.id for res in result):
                 continue
 
+            # More than one completed neighbors
+            # We check this to prevent unflipping more than once unlocked tiles
+            completed_neighbors = 0
+            for neighbor in tile.neighbors:
+                if self.board[neighbor].value.state == TileState.COMPLETED:
+                    completed_neighbors += 1
+
+            if completed_neighbors > 1:
+                continue
+
             tile.value.state = new_state
             result.append(tile.value)
 

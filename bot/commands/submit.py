@@ -57,15 +57,20 @@ async def accept_submission(submission: Submission):
             submission.node, TileState.UNLOCKED, filter=[TileState.COMPLETED]
         )
 
+        if len(new_tiles) == 0:
+            return
+
         # Generate updated board
         images.generate_image(submission.team.get_id())
 
         embed = get_unlock_embed(submission.i, submission.team, new_tiles)
+
         # Check if is text channel
         if submission.i.channel is None:
             return
         if not isinstance(submission.i.channel, discord.TextChannel):
             return
+
         await submission.i.channel.send(embed=embed)
 
     return get_submission_message(
@@ -254,7 +259,9 @@ class Submit(commands.Cog):
         if submission.tile.would_complete_tile(task, amount):
             message = "This would complete the tile, unlocking new tiles."
 
-        await i.response.send_message("Proof submited!", ephemeral=True, delete_after=10)
+        await i.response.send_message(
+            "Proof submited!", ephemeral=True, delete_after=10
+        )
 
         msg = await i.channel.send(
             get_submission_message(

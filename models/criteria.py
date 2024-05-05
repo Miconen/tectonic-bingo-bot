@@ -68,4 +68,6 @@ class Some(Criteria, object):
         return count >= self.threshold
 
     def get_count(self) -> int:
-        return reduce(lambda acc, elem: acc + int(elem.is_satisfied()), self.criteria.values(), 0)
+        return reduce(
+            lambda acc, elem: acc + int(elem.is_satisfied()), self.criteria.values(), 0
+        )

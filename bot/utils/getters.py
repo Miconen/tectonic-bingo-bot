@@ -43,7 +43,7 @@ def get_tile_embed(i: discord.Interaction, tile: Tile):
     )
     embed.add_field(
         name=f"Info",
-        value="`/board` to see the updated board.\n`/list` to see all unlocked tiles.",
+        value="`/board` to see the updated board.\n`/tiles` to see all unlocked tiles.",
         inline=False,
     )
     embed.set_footer(text=footer_text).timestamp = i.created_at
@@ -116,7 +116,7 @@ def get_unlock_embed(i: discord.Interaction, team: Team, tiles: List[Tile]):
 
     embed.add_field(
         name=f"Info",
-        value="`/board` to see the updated board.\n`/tile <id>` to see a specific tile.\n`/list` to see all unlocked tiles.",
+        value="`/board` to see the updated board.\n`/tile <id>` to see a specific tile.\n`/tiles` to see all unlocked tiles.",
         inline=False,
     )
 

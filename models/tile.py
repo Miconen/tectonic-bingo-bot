@@ -145,6 +145,17 @@ class Tile:
         """Mark the tile as completed."""
         self.state = TileState.COMPLETED
 
+    def remove_submission(self, proof: Proof):
+        """Remove a submission from the tile."""
+        removed = False
+
+        for k in self.requirements.keys():
+            if proof.task in k.split("|"):
+                self.requirements[k].submit(-proof.amount, proof.task)
+                removed = True
+
+        return removed
+
     def submit(self, key: str, amount: int):
         """Submit a requirement to unlock the task."""
         done = False
