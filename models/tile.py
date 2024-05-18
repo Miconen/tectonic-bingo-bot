@@ -5,6 +5,7 @@ from typing import Dict, List
 from enum import Enum
 from abc import ABC, abstractmethod
 
+from bot.utils.input import sanitize_string
 
 class Color(Enum):
     GREEN = 0x00FF00
@@ -157,12 +158,18 @@ class Tile:
         return removed
 
     def submit(self, key: str, amount: int):
-        """Submit a requirement to unlock the task."""
+        """Submit a requirement to unlock the task. Supports multiple keys in one string and handles sanitization for precise input."""
         done = False
 
-        for k in self.requirements.keys():
-            if key in k.split("|"):
-                done = self.requirements[k].submit(amount, key)
+        key = sanitize_string(key)
+
+        for k, v in self.requirements.items():
+            tile_task_keys = map(sanitize_string, k.split("|"))
+
+            print(key, tile_task_keys)
+
+            if key in tile_task_keys:
+                done = v.submit(amount, key)
 
         return done
 

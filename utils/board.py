@@ -113,11 +113,12 @@ def generate_board():
                 "Tumeken's Shadow": Count(1),
                 "Twisted Bow": Count(1),
             },
-            id=34,
+            id=36,
             image="https://oldschool.runescape.wiki/images/Zamorak_hilt_detail.png",
             name="Raid Megarare",
             description="Obtain any megarare raid drop. (Scythe, Twisted Bow, or Shadow)",
         ),
+        # Hard tiles
         Tile(
             TileTheme.HARD,
             {
@@ -146,6 +147,37 @@ def generate_board():
                 "Sunfire splinter": Count(150000),
             },
             id=6,
+            image="https://oldschool.runescape.wiki/images/Sunfire_splinters_4_detail.png",
+            name="Blessings of Ralos",
+            description="TBD: Sunfire splinters",
+        ),
+        # Challenge tiles
+        Tile(
+            TileTheme.CHALLENGE,
+            {
+                "Sunfire splinter": Count(150000),
+            },
+            id=1,
+            image="https://oldschool.runescape.wiki/images/Sunfire_splinters_4_detail.png",
+            name="Blessings of Ralos",
+            description="TBD: Sunfire splinters",
+        ),
+        Tile(
+            TileTheme.CHALLENGE,
+            {
+                "Sunfire splinter": Count(150000),
+            },
+            id=34,
+            image="https://oldschool.runescape.wiki/images/Sunfire_splinters_4_detail.png",
+            name="Blessings of Ralos",
+            description="TBD: Sunfire splinters",
+        ),
+        Tile(
+            TileTheme.CHALLENGE,
+            {
+                "Sunfire splinter": Count(150000),
+            },
+            id=29,
             image="https://oldschool.runescape.wiki/images/Sunfire_splinters_4_detail.png",
             name="Blessings of Ralos",
             description="TBD: Sunfire splinters",

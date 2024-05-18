@@ -9,6 +9,7 @@ from bot.utils.printing import print_requirements, print_requirement_progress
 import discord
 
 from models.tile import Tile
+from bot.utils.input import sanitize_string
 
 footer_texts: List[str] = [
     "This is a footer",
@@ -155,40 +156,61 @@ def get_submission_message(
 
 
 def get_by_state(status: TileState, team: Team):
-    return [tile for tile in team.board.values() if tile.value.state == status]
+    tiles = team.board.get_tiles()
+    return [tile for tile in tiles.values() if tile.value.state == status]
 
 
 def get_tile_state_by_task(team_id: int, task: str):
     found = None
+    team = state.teams[team_id]
+    board = team.board
 
-    for node in state.teams[team_id].board.values():
-        for keys in node.value.requirements.keys():
-            if task in keys.split("|"):
-                if node.value.state == TileState.COMPLETED:
-                    found = node.value.state
-                    continue
+    task = sanitize_string(task)
 
-                if node.value.state != TileState.UNLOCKED:
-                    continue
+    for tile_id in board.get_tiles().keys():
+        tile = board.get_tile(tile_id)
 
-                return node.value.state
+        for keys in tile.requirements.keys():
+            task_keys = map(sanitize_string, keys.split("|"))
+
+            if task not in task_keys:
+                continue
+
+            if tile.state == TileState.COMPLETED:
+                found = tile.state
+                continue
+
+            if tile.state != TileState.UNLOCKED:
+                continue
+
+            return tile.state
 
     return found
 
 
 def get_tile_id_by_task(team_id: int, task: str):
     found = None
+    team = state.teams[team_id]
+    board = team.board
 
-    for tile_id, node in state.teams[team_id].board.items():
-        for keys in node.value.requirements.keys():
-            if task in keys.split("|"):
-                if node.value.state == TileState.COMPLETED:
-                    found = tile_id
-                    continue
+    task = sanitize_string(task)
 
-                if node.value.state != TileState.UNLOCKED:
-                    continue
+    for tile_id in board.get_tiles().keys():
+        tile = board.get_tile(tile_id)
 
-                return tile_id
+        for keys in tile.requirements.keys():
+            task_keys = map(sanitize_string, keys.split("|"))
+
+            if task not in task_keys:
+                continue
+
+            if tile.state == TileState.COMPLETED:
+                found = tile_id
+                continue
+
+            if tile.state != TileState.UNLOCKED:
+                continue
+
+            return tile_id
 
     return found

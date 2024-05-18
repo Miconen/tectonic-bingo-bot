@@ -81,7 +81,7 @@ class ImageState:
         return True
 
     def generate_image(self, team_id: int):
-        tiles = [node.value for node in state.teams[team_id].board.values()]
+        tiles = [node.value for node in state.teams[team_id].board.get_tiles().values()]
 
         lines: List[Tuple[Tuple[int, int], Tuple[int, int]]] = []
 

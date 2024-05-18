@@ -1,5 +1,5 @@
 from typing import List
-from models.tile import Tile, TileState
+from models.tile import Tile
 
 class GraphNode(object):
     value: Tile

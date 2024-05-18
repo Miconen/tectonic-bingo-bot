@@ -54,7 +54,7 @@ class Debug(commands.GroupCog):
             res = f"Team for role <@&{role.id}> not found"
             return await i.response.send_message(res)
 
-        tile = team.get_tile(tile_id)
+        tile = team.board.get_tile(tile_id)
         if tile is None:
             res = f"Tile #{tile_id} not found for team {role.name}"
             return await i.response.send_message(res)
@@ -97,7 +97,7 @@ class Debug(commands.GroupCog):
             res = f"Team for role <@&{role.id}> not found"
             return await i.response.send_message(res)
 
-        tile = team.get_tile(tile_id)
+        tile = team.board.get_tile(tile_id)
         if tile is None:
             res = f"Tile #{tile_id} not found for team {role.name}"
             return await i.response.send_message(res)
@@ -127,7 +127,7 @@ class Debug(commands.GroupCog):
 
             node = team.get_node(tile_id)
             team.update_neighboring(
-                node, TileState.LOCKED, filter=[TileState.COMPLETED]
+                node, TileState.LOCKED, excludes=[TileState.COMPLETED]
             )
 
             # Generate updated board

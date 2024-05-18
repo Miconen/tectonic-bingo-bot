@@ -4,6 +4,7 @@ from discord.ext import commands
 from state.state import state
 from models.team import Team
 from models.tile import TileState
+from models.board import Board
 from utils.board import generate_board
 from bot.utils.getters import get_by_state
 from bot.utils.images import images
@@ -28,7 +29,8 @@ class Teams(commands.GroupCog):
             await i.response.send_message(f"{role} is already a team.")
             return
 
-        state.add_team(Team(role, generate_board()))
+        board = Board(generate_board())
+        state.add_team(Team(role, board))
         images.generate_image(role.id)
 
         await i.response.send_message(f"Added {role} as a team.")

@@ -3,9 +3,9 @@ from dataclasses import dataclass
 import discord
 from discord.ext import commands
 from io import BytesIO
-from typing import Dict
 
 from models.graph import GraphNode
+from models.board import Board
 from state.state import state
 from utils.teams import in_team
 from models.tile import TileState, Tile, Proof
@@ -24,7 +24,7 @@ app_commands = discord.app_commands
 @dataclass
 class Submission:
     team: Team
-    board: Dict[int, GraphNode]
+    board: Board
     node: GraphNode
     i: discord.Interaction
     proof_index: int
@@ -54,7 +54,7 @@ async def accept_submission(submission: Submission):
 
         # Unlock neighboring non completed tiles
         new_tiles = submission.team.update_neighboring(
-            submission.node, TileState.UNLOCKED, filter=[TileState.COMPLETED]
+            submission.node, TileState.UNLOCKED, excludes=[TileState.COMPLETED]
         )
 
         if len(new_tiles) == 0:
@@ -128,7 +128,8 @@ class Buttons(discord.ui.View):
         # Accept proof
         self.submission.tile.proof[self.submission.proof_index].approved = True
         self.submission.tile.proof[self.submission.proof_index].approved_by = i.user.id
-        self.submission.tile.proof[self.submission.proof_index].approved_at = time()
+        self.submission.tile.proof[self.submission.proof_index].approved_at = time(
+        )
 
         await i.response.edit_message(
             content=await accept_submission(self.submission), view=None
@@ -223,8 +224,8 @@ class Submit(commands.Cog):
 
         team = state.teams[team]
         board = team.board
-        node = board[task_tile_id]
-        tile = node.value
+        node = board.get_node(task_tile_id)
+        tile = board.get_tile(task_tile_id)
 
         # Initialize proof list
         if tile.proof is None:

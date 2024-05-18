@@ -33,9 +33,9 @@ class Tiles(commands.Cog):
             )
             return
 
-        board = state.teams[team].board
+        tiles = state.teams[team].board.get_tiles()
         unlocked_tiles = [
-            node.value for node in board.values() if node.value.is_unlocked()
+            node.value for node in tiles.values() if node.value.is_unlocked()
         ]
 
         embed = get_tiles_embed(i, state.teams[team], unlocked_tiles)
