@@ -143,7 +143,7 @@ class ImageState:
                 tuple(coordinate + 5 for coordinate in COORDINATES[tile.id]),
                 str(tile.id),
                 font=font,
-                fill="white",
+                fill="black",
             )
 
             if tile.state == TileState.LOCKED:

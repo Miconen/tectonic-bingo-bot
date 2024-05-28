@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-import jsonpickle
 
 from utils.time import get_relative_time, TimestampType
 from models.tile import TileState
@@ -98,6 +97,7 @@ class Debug(commands.GroupCog):
             return await i.response.send_message(res)
 
         tile = team.board.get_tile(tile_id)
+
         if tile is None:
             res = f"Tile #{tile_id} not found for team {role.name}"
             return await i.response.send_message(res)
@@ -111,21 +111,28 @@ class Debug(commands.GroupCog):
             return await i.response.send_message(res)
 
         was_completed = tile.check_complete()
-        proof = tile.proof.pop()
+        proof = None if len(tile.proof) == 0 else tile.proof[-1]
+
+        if proof is None:
+            res = f"Last proof submission for tile {tile_id} not found"
+            return await i.response.send_message(res)
+
         removed = tile.remove_submission(proof)
 
         if not removed:
             res = f"Last proof submission for tile {tile_id} was not removed"
             return await i.response.send_message(res)
 
+        # Remove the proof from state
+        tile.proof.pop()
         msg = f"Proof for tile {tile_id} undone by <@{i.user.id}>"
 
-        # Uncomplete the tile if removed submission was required for tile completion
+        # Incomplete the tile if removed submission was required for tile completion
         if not tile.check_complete() and was_completed:
             # Set the tile back to unlocked
             tile.state = TileState.UNLOCKED
 
-            node = team.get_node(tile_id)
+            node = team.board.get_node(tile_id)
             team.update_neighboring(
                 node, TileState.LOCKED, excludes=[TileState.COMPLETED]
             )
@@ -133,7 +140,7 @@ class Debug(commands.GroupCog):
             # Generate updated board
             images.generate_image(team.get_id())
 
-            msg += f"\nTile marked as uncomplete and neihgbors locked"
+            msg += f"\nTile marked as incomplete and neighbors locked"
 
         # Save game state
         state.serialize()

@@ -43,13 +43,13 @@ class Teams(commands.GroupCog):
     async def remove(self, i: discord.Interaction, role: discord.Role):
         """Add a team based on a role."""
         if state.teams.get(role.id) is None:
-            await i.response.send_message(f"{role} is not a team.")
+            await i.response.send_message(f"<@&{role.id}> is not a team.")
             return
 
         state.remove_team(role.id)
         images.remove_image(role.id)
 
-        await i.response.send_message(f"Removed {role} from teams.")
+        await i.response.send_message(f"Removed <@&{role.id}> from teams.")
 
         # Save the game state
         state.serialize()
@@ -57,7 +57,7 @@ class Teams(commands.GroupCog):
     @app_commands.command(name="list", description="List all teams.")
     @commands.has_permissions(manage_roles=True)
     async def list(self, i: discord.Interaction):
-        """Add a team based on a role."""
+        """List added teams and their discord roles."""
         if len(state.teams) == 0:
             await i.response.send_message("There are no teams.", ephemeral=True)
             return

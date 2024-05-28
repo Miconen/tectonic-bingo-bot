@@ -1,5 +1,3 @@
-import discord
-
 from dataclasses import dataclass
 from typing import Dict, List
 from enum import Enum
@@ -150,10 +148,28 @@ class Tile:
         """Remove a submission from the tile."""
         removed = False
 
-        for k in self.requirements.keys():
-            if proof.task in k.split("|"):
-                self.requirements[k].submit(-proof.amount, proof.task)
+        # Sanitize user input for comparison
+        proof.task = sanitize_string(proof.task)
+
+        for keys in self.requirements.keys():
+            # Sanitize and split requirement keys for comparison
+            task_keys = map(sanitize_string, keys.split("|"))
+
+            # Check if the proof task is in the tile requirements
+            if proof.task not in task_keys:
+                continue
+
+            # Now we need to get the original non sanitized key
+            # that we can use to remove the submission
+            for k in keys.split("|"):
+                if proof.task != sanitize_string(k):
+                    continue
+
+                proof.task = k
+                self.requirements[keys].submit(-proof.amount, proof.task)
                 removed = True
+                break
+
 
         return removed
 
@@ -165,8 +181,6 @@ class Tile:
 
         for k, v in self.requirements.items():
             tile_task_keys = map(sanitize_string, k.split("|"))
-
-            print(key, tile_task_keys)
 
             if key in tile_task_keys:
                 done = v.submit(amount, key)
