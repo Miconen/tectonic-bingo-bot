@@ -114,7 +114,7 @@ class Buttons(discord.ui.View):
         self.submission = submission
 
     @discord.ui.button(
-        custom_id="accept", label="Accept", style=discord.ButtonStyle.green
+        custom_id="accept", label="🛡️Accept", style=discord.ButtonStyle.green
     )
     @commands.has_permissions(manage_roles=True)
     async def accept_button(self, i: discord.Interaction, button: discord.ui.Button):
@@ -123,7 +123,9 @@ class Buttons(discord.ui.View):
         if not isinstance(self.submission.i.channel, discord.TextChannel):
             return
         if self.submission.tile.proof is None:
-            return "No proof was submitted with this task."
+            return
+        if not discord.Permissions(i.permissions.value).manage_roles:
+            return
 
         # Accept proof
         self.submission.tile.proof[self.submission.proof_index].approved = True
@@ -138,7 +140,7 @@ class Buttons(discord.ui.View):
         # Save the game state
         state.serialize()
 
-    @discord.ui.button(custom_id="deny", label="Deny", style=discord.ButtonStyle.red)
+    @discord.ui.button(custom_id="deny", label="🛡️Deny", style=discord.ButtonStyle.red)
     @commands.has_permissions(manage_roles=True)
     async def deny_button(self, i: discord.Interaction, button: discord.ui.Button):
         if self.submission.i.channel is None:
@@ -146,13 +148,11 @@ class Buttons(discord.ui.View):
         if not isinstance(self.submission.i.channel, discord.TextChannel):
             return
         if self.submission.tile.proof is None:
-            return "No proof was submitted with this task."
-
+            return
+        if not discord.Permissions(i.permissions.value).manage_roles:
+            return
         # Remove proof
         self.submission.tile.proof = None
-
-        if not discord.Permissions(i.permissions.value).administrator:
-            return
 
         await i.response.edit_message(
             content=await deny_submission(self.submission), view=None
