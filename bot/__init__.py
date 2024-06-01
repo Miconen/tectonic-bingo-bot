@@ -14,6 +14,7 @@ cogs = (
     "bot.commands.submit",
     "bot.commands.teams",
     "bot.commands.board",
+    "bot.commands.help",
 )
 
 
