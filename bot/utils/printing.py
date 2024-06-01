@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict
 from models.criteria import Some, Count
 from models.tile import Criteria
 from models.tile import Tile
