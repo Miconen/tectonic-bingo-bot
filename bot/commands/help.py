@@ -49,6 +49,11 @@ commands_help = {
         name="submissions",
         description="Submitting “tasks” for tiles should be relatively simple using the bot commands. Once you have submitted a task using the `/submit` commmand, you will need a bingo moderator to accept your submission which will automatically reveal further tiles (if unlocked).",
     ),
+    "teams": CommandHelp(
+        name="teams",
+        description="Usage:\n`/teams add <role>`\n`/teams remove <role>`\n`/teams list`\n\nList and manage all teams and their progress. This command is useful to see and manage teams that are a part of the bingo and to track their progress.",
+        moderator=True,
+    ),
 }
 
 class Help(commands.Cog):
