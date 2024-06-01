@@ -124,7 +124,7 @@ class Buttons(discord.ui.View):
             return
         if self.submission.tile.proof is None:
             return
-        if not discord.Permissions(i.permissions.value).manage_roles:
+        if not i.permissions.manage_roles:
             return
 
         # Accept proof
@@ -149,7 +149,7 @@ class Buttons(discord.ui.View):
             return
         if self.submission.tile.proof is None:
             return
-        if not discord.Permissions(i.permissions.value).manage_roles:
+        if not i.permissions.manage_roles:
             return
         # Remove proof
         self.submission.tile.proof = None
