@@ -2,7 +2,7 @@ from typing import List
 
 import discord
 
-from  models.graph import GraphNode
+from models.graph import GraphNode
 from models.board import Board
 from models.tile import Tile, TileState
 
