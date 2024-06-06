@@ -5,6 +5,7 @@ from models.team import Team
 
 
 def in_team(user: discord.Member, teams: Dict[int, Team]):
+    """Returns the Discord role id of a team."""
     team_ids = teams.keys()
 
     for role in user.roles:
