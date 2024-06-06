@@ -13,5 +13,8 @@ class Board:
     def get_tile(self, tile_id: int):
         return self.get_node(tile_id).value
 
-    def get_tiles(self):
+    def get_nodes(self):
         return self.tiles
+
+    def get_tiles(self):
+        return { tile: self.get_tile(tile) for tile in self.tiles }

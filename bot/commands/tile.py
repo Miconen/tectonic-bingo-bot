@@ -39,7 +39,7 @@ class Tile(commands.Cog):
         tile = next(
             (
                 node.value
-                for k, node in board.get_tiles().items()
+                for k, node in board.get_nodes().items()
                 if node.value.is_unlocked() and k == tile_id
             ),
             None,

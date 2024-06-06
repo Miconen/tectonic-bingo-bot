@@ -156,8 +156,8 @@ def get_submission_message(
 
 
 def get_by_state(status: TileState, team: Team):
-    tiles = team.board.get_tiles()
-    return [tile for tile in tiles.values() if tile.value.state == status]
+    tiles = team.board.get_nodes()
+    return [node for node in tiles.values() if node.value.state == status]
 
 
 def get_tile_state_by_task(team_id: int, task: str):
@@ -167,7 +167,7 @@ def get_tile_state_by_task(team_id: int, task: str):
 
     task = sanitize_string(task)
 
-    for tile_id in board.get_tiles().keys():
+    for tile_id in board.get_nodes().keys():
         tile = board.get_tile(tile_id)
 
         for keys in tile.requirements.keys():
@@ -195,7 +195,7 @@ def get_tile_id_by_task(team_id: int, task: str):
 
     task = sanitize_string(task)
 
-    for tile_id in board.get_tiles().keys():
+    for tile_id in board.get_nodes().keys():
         tile = board.get_tile(tile_id)
 
         for keys in tile.requirements.keys():

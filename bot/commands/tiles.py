@@ -33,7 +33,7 @@ class Tiles(commands.Cog):
             )
             return
 
-        tiles = state.teams[team].board.get_tiles()
+        tiles = state.teams[team].board.get_nodes()
         unlocked_tiles = [
             node.value for node in tiles.values() if node.value.is_unlocked()
         ]
