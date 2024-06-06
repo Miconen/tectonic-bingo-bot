@@ -51,4 +51,4 @@ def print_requirement_progress(tile: Tile):
         if req.is_satisfied():
             done = done + 1
 
-    return f"{done}/{tile.required_for_completetion}"
+    return f"{done}/{tile.required_for_completetion} completed"

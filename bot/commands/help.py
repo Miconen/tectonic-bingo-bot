@@ -100,7 +100,6 @@ class Help(commands.Cog):
             if not c.moderator:
                 return True
 
-            print(f"{i.user.display_name} has perms? -> {i.permissions.manage_roles}")
             return i.permissions.manage_roles
 
         return [
