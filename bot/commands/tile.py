@@ -29,13 +29,17 @@ class Tile(commands.Cog):
         if not isinstance(i.user, discord.Member):
             return
 
-        team = in_team(i.user, state.teams)
+        team_id = in_team(i.user, state.teams)
+        if team_id is None:
+            res = f"You are not in a bingo team"
+            return await i.response.send_message(res, ephemeral=True)
 
+        team = state.get_team(team_id)
         if team is None:
-            await i.response.send_message(f"You are not in a bingo team")
-            return
+            res = f"Error fetching your team"
+            return await i.response.send_message(res, ephemeral=True)
 
-        board = state.teams[team].board
+        board = team.board
         tile = next(
             (
                 node.value
@@ -46,10 +50,8 @@ class Tile(commands.Cog):
         )
 
         if tile is None:
-            await i.response.send_message(
-                f"No tile unlocked with ID #{tile_id} for team ({state.teams[team].get_name()})"
-            )
-            return
+            res = f"No tile unlocked with ID #{tile_id} for team ({team.get_name()})"
+            return await i.response.send_message(res)
 
         embed = get_tile_embed(i, tile)
         await i.response.send_message(embed=embed)

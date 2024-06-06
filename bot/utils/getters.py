@@ -31,7 +31,8 @@ def get_tile_embed(i: discord.Interaction, tile: Tile):
         title=f"{tile.name} (#{tile.id})", color=tile.theme.value, url=tile.rules_link
     )
     embed.set_thumbnail(url=tile.image)
-    embed.add_field(name="Description", value=tile.description, inline=False)
+    if tile.description:
+        embed.add_field(name="Description", value=tile.description, inline=False)
     embed.add_field(
         name=f"Tile tasks ({print_requirement_progress(tile)})",
         value=print_requirements(tile.requirements),

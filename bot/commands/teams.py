@@ -26,14 +26,15 @@ class Teams(commands.GroupCog):
     async def add(self, i: discord.Interaction, role: discord.Role):
         """Add a team based on a role."""
         if state.teams.get(role.id) is not None:
-            await i.response.send_message(f"{role} is already a team.")
-            return
+            res = f"{role} is already a team."
+            return await i.response.send_message(res)
 
         board = Board(generate_board())
         state.add_team(Team(role, board))
         images.generate_image(role.id)
 
-        await i.response.send_message(f"Added {role} as a team.")
+        res = f"Added {role} as a team."
+        await i.response.send_message(res)
 
         # Save the game state
         state.serialize()
