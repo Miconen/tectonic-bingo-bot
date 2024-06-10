@@ -48,76 +48,25 @@ neighbor_map: Dict[int, List[int]] = {
 def generate_board():
     tiles = [
         Tile(
-            TileTheme.MISCELLANEOUS,
+            TileTheme.CHALLENGE,
             {
-                "Odium 1|Malediction 1": Some(
-                    {"Odium 1": Count(1), "Malediction 1": Count(1)},
-                ),
-                "Odium 2|Malediction 2": Some(
-                    {"Odium 2": Count(1), "Malediction 2": Count(1)},
-                ),
-                "Odium 3|Malediction 3": Some(
-                    {"Odium 3": Count(1), "Malediction 3": Count(1)},
-                ),
-            },
-            id=16,
-            image="https://oldschool.runescape.wiki/images/Malediction_ward_detail.png",
-            name="Wilderness Shield",
-            description="Obtain wildy shield fragments 1, 2, & 3. Each fragment can be from either of the shields I.e malediction shard 1, odium shard 2, odium shard 3.",
-            required_for_completetion=3,
-        ),
-        Tile(
-            TileTheme.RAIDS,
-            {
-                "Cursed phalanx|Holy ornament kit|Sanguine ornament kit": Some(
+                "Tecu Weapon|Cursed Goblin Staff|Cursed Goblin Bow": Some(
                     {
-                        "Cursed phalanx": Count(5),
-                        "Twisted ancestral colour kit": Count(1),
-                        "Holy ornament kit": Count(1),
-                        "Sanguine ornament kit": Count(1),
+                        "Tecu Weapon": Count(1),
+                        "Cursed Goblin Staff": Count(1),
+                        "Cursed Goblin Bow": Count(1),
                     },
-                    2,
-                ),
-                "Metamorphic dust|Sanguine dust": Some(
-                    {"Metamorphic dust": Count(1), "Sanguine dust": Count(1)}
+                    required=3,
                 ),
             },
-            id=5,
-            image="https://oldschool.runescape.wiki/images/Twisted_ancestral_colour_kit_detail.png",
-            name="Hard Modes",
-            description="Mix of all possible hard mode raid drops.",
-        ),
-        Tile(
-            TileTheme.MISCELLANEOUS,
-            {
-                "Mudskipper hat": Count(1),
-                "Flippers": Count(1),
-            },
-            state=TileState.UNLOCKED,
-            id=4,
-            image="https://oldschool.runescape.wiki/images/thumb/Flippers_detail.png/1024px-Flippers_detail.png",
-            name="Mogre Dropper",
-            description="To kick it off the summer bingo, obtain a mudskipper hat and flippers.",
-        ),
-        Tile(
-            TileTheme.MISCELLANEOUS,
-            {
-                "Staff of the dead": Count(1),
-                "Saradomin's light": Count(1),
-            },
-            id=7,
-            image="https://oldschool.runescape.wiki/images/Staff_of_light_detail.png",
-            name="Staff of Light",
-            description="Get both pieces for a full Staff of Light as a team.\nZamorak/Saradomin hilt is a wildcard (can be submitted for either Staff of Light Piece)",
-        ),
-        Tile(
-            TileTheme.MISCELLANEOUS,
-            {"Wilderness unique": Count(3)},
-            id=8,
-            image="https://oldschool.runescape.wiki/images/Voidwaker_hilt_detail.png",
-            name="VW and Rings",
+            id=1,
+            image="https://oldschool.runescape.wiki/images/Tecu_salamander_detail.png",
+            name="Cursed Gear",
             description="""
-                Obtain any mix of three Voidwaker pieces and wilderness rings
+                3x fight cave completions using only specified weapons // each must be done by a different player
+                Tecu Weapon (can wear any armor + any spells)
+                Cursed Goblin Staff (can wear any armor + any spells)
+                Cursed Goblin Bow (can wear any armor + any spells)
             """,
         ),
         Tile(
@@ -148,11 +97,103 @@ def generate_board():
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
+            {
+                "Mudskipper hat": Count(1),
+                "Flippers": Count(1),
+            },
+            state=TileState.UNLOCKED,
+            id=4,
+            image="https://oldschool.runescape.wiki/images/thumb/Flippers_detail.png/1024px-Flippers_detail.png",
+            name="Mogre Dropper",
+            description="To kick it off the summer bingo, obtain a mudskipper hat and flippers.",
+        ),
+        Tile(
+            TileTheme.RAIDS,
+            {
+                "Cursed phalanx|Holy ornament kit|Sanguine ornament kit": Some(
+                    {
+                        "Cursed phalanx": Count(5),
+                        "Twisted ancestral colour kit": Count(1),
+                        "Holy ornament kit": Count(1),
+                        "Sanguine ornament kit": Count(1),
+                    },
+                    required=2,
+                ),
+                "Metamorphic dust|Sanguine dust": Some(
+                    {"Metamorphic dust": Count(1), "Sanguine dust": Count(1)}
+                ),
+            },
+            id=5,
+            image="https://oldschool.runescape.wiki/images/Twisted_ancestral_colour_kit_detail.png",
+            name="Hard Modes",
+            description="Mix of all possible hard mode raid drops.",
+        ),
+        Tile(
+            TileTheme.HARD,
+            {"Sunfire splinter": Count(150000)},
+            id=6,
+            image="https://oldschool.runescape.wiki/images/Sunfire_splinters_4_detail.png",
+            name="Blessings of Ralos",
+            description="""
+                Acquire 150k total splinters from the Colosseum. Unique items can be submitted at the below values worth of sunfire splinters.\n
+                Echo crystal: 5k each
+                Sunfire armor: 10k each piece
+                Tonalztics of ralos: 15k
+                Dizana's quiver: 4k each
+            """,
+        ),
+        Tile(
+            TileTheme.MISCELLANEOUS,
+            {
+                "Staff of the dead": Count(1),
+                "Saradomin's light": Count(1),
+            },
+            id=7,
+            image="https://oldschool.runescape.wiki/images/Staff_of_light_detail.png",
+            name="Staff of Light",
+            description="Get both pieces for a full Staff of Light as a team.\nZamorak/Saradomin hilt is a wildcard (can be submitted for either Staff of Light Piece)",
+        ),
+        Tile(
+            TileTheme.MISCELLANEOUS,
+            {"Wilderness unique": Count(3)},
+            id=8,
+            image="https://oldschool.runescape.wiki/images/Voidwaker_hilt_detail.png",
+            name="VW and Rings",
+            description="""
+                Obtain any mix of three Voidwaker pieces and wilderness rings
+            """,
+        ),
+        Tile(
+            TileTheme.HARD,
+            {"Nex Unique": Count(2)},
+            id=9,
+            image="https://oldschool.runescape.wiki/images/Torva_full_helm_detail.png",
+            name="Nex",
+            description="""
+                Obtain any two nex uniques (Dupes and pets allowed)\n
+                Torva platebody
+                Torva plaelegs
+                Torva helmet
+                Ancient hilt
+                Nihil horn
+                Nexling
+            """,
+        ),
+        Tile(
+            TileTheme.HARD,
+            {"Infernal Cape": Count(3)},
+            id=10,
+            image="https://oldschool.runescape.wiki/images/Infernal_cape_detail.png",
+            name="Inferno",
+            description="Acquire three infernal capes (Zuk tasks allowed).",
+        ),
+        Tile(
+            TileTheme.MISCELLANEOUS,
             {"Barrows unique": Count(10)},
             id=11,
             image="https://oldschool.runescape.wiki/images/Dharok's_greataxe_detail.png",
             name="Barrows",
-            description="Acquire 10 barrows uniques.",
+            description="Acquire any 10 barrows uniques.",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -245,6 +286,25 @@ def generate_board():
                 Guaranteed Vorkath (50kc) and KQ (Tattered) heads do not count.
                 Only unique, non duplicate submissions count.
             """,
+        ),
+        Tile(
+            TileTheme.MISCELLANEOUS,
+            {
+                "Odium 1|Malediction 1": Some(
+                    {"Odium 1": Count(1), "Malediction 1": Count(1)},
+                ),
+                "Odium 2|Malediction 2": Some(
+                    {"Odium 2": Count(1), "Malediction 2": Count(1)},
+                ),
+                "Odium 3|Malediction 3": Some(
+                    {"Odium 3": Count(1), "Malediction 3": Count(1)},
+                ),
+            },
+            id=16,
+            image="https://oldschool.runescape.wiki/images/Malediction_ward_detail.png",
+            name="Wilderness Shield",
+            description="Obtain wildy shield fragments 1, 2, & 3. Each fragment can be from either of the shields I.e malediction shard 1, odium shard 2, odium shard 3.",
+            required_for_completetion=3,
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -370,6 +430,7 @@ def generate_board():
             id=26,
             image="https://oldschool.runescape.wiki/images/Blood_moon_helm_detail.png",
             name="Moons of Peril",
+            description="Any 5 uniques from Moons of Peril",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -397,7 +458,7 @@ def generate_board():
             id=27,
             image="https://oldschool.runescape.wiki/images/Twisted_slayer_helmet_detail.png",
             name="Miscellaneous Slayer",
-            description="Achieve five miscellaneous slayer related items from the list or get an imbued heart."
+            description="Achieve five miscellaneous slayer related items from the list or get an imbued heart.",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -407,8 +468,24 @@ def generate_board():
             name="Tombs of Amascut",
         ),
         Tile(
+            TileTheme.CHALLENGE,
+            {"Perilous Moons Colosseum": Count(1)},
+            id=29,
+            image="https://oldschool.runescape.wiki/images/Executioner's_axe_head_detail.png",
+            name="Bonk Bonk",
+            description="Complete the Colosseum using gear from Moons of Peril for each applicable slot (Rest is fine to fill in).",
+        ),
+        Tile(
             TileTheme.MISCELLANEOUS,
-            {"Sarachnis cudgel": Count(3), "Jar of eyes": Count(1), "Sraracha": Count(1)},
+            {
+                "Sarachnis cudgel|Jar of eyes|Sraracha": Some(
+                    {
+                        "Sarachnis cudgel": Count(3),
+                        "Jar of eyes": Count(1),
+                        "Sraracha": Count(1),
+                    },
+                ),
+            },
             id=30,
             image="https://oldschool.runescape.wiki/images/Giant_egg_sac(full)_detail.png",
             name="Sarachnis",
@@ -426,7 +503,7 @@ def generate_board():
             id=32,
             image="https://oldschool.runescape.wiki/images/Berserker_ring_detail.png",
             name="DKS Rings",
-            description="Any 6 ring drops. Ring of life not included."
+            description="Any 6 ring drops. Ring of life not included.",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -434,15 +511,27 @@ def generate_board():
             id=33,
             image="https://oldschool.runescape.wiki/images/Executioner's_axe_head_detail.png",
             name="Desert Treasure II",
-            description="Any 3 Desert Treasure II uniques, including ingots. Any DT2 pet will also complete the tile."
+            description="Any 3 Desert Treasure II uniques, including ingots. Any DT2 pet will also complete the tile.",
+        ),
+        Tile(
+            TileTheme.CHALLENGE,
+            {
+                "Sledding time": Count(1),
+            },
+            id=34,
+            image="https://oldschool.runescape.wiki/images/Sled_(unwaxed)_detail.png",
+            name="Cool for the Summer",
+            description='Achieve a sub 50 second sled time. To learn more about this activity, search for "Sled Racing" on the Wiki.',
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
-            {"Perilous Moons Colosseum": Count(1)},
+            {
+                "Nightmare unique": Count(1),
+            },
             id=35,
-            image="https://oldschool.runescape.wiki/images/Executioner's_axe_head_detail.png",
-            name="Bonk Bonk",
-            description="Complete the Colosseum using gear from Moons of Peril for each applicable slot (Rest is fine to fill in)."
+            image="https://oldschool.runescape.wiki/images/Harmonised_orb_detail.png",
+            name="Nightmare",
+            description="Get any unique from the Nightmare.",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -459,76 +548,6 @@ def generate_board():
             image="https://oldschool.runescape.wiki/images/Soaked_page_detail.png",
             name="Tempoross",
             description="Be sure to send an image of an empty reward pool before pulling rewards that you're gong to submit for this tile.",
-        ),
-        # Hard tiles
-        Tile(
-            TileTheme.HARD,
-            {"Infernal Cape": Count(3)},
-            id=10,
-            image="https://oldschool.runescape.wiki/images/Infernal_cape_detail.png",
-            name="Inferno",
-            description="Acquire three infernal capes (Zuk tasks allowed).",
-        ),
-        Tile(
-            TileTheme.HARD,
-            {"Nex Unique": Count(2)},
-            id=9,
-            image="https://oldschool.runescape.wiki/images/Torva_full_helm_detail.png",
-            name="Nex",
-            description="""
-                Obtain any two nex uniques (Dupes and pets allowed)\n
-                Torva platebody
-                Torva plaelegs
-                Torva helmet
-                Ancient hilt
-                Nihil horn
-                Nexling
-            """,
-        ),
-        Tile(
-            TileTheme.HARD,
-            {"Sunfire splinter": Count(150000)},
-            id=6,
-            image="https://oldschool.runescape.wiki/images/Sunfire_splinters_4_detail.png",
-            name="Blessings of Ralos",
-            description="""
-                Acquire 150k total splinters from the Colosseum. Unique items can be submitted at the below values worth of sunfire splinters.\n
-                Echo crystal: 5k each
-                Sunfire armor: 10k each piece
-                Tonalztics of ralos: 15k
-                Dizana's quiver: 4k each
-            """,
-        ),
-        # Challenge tiles
-        Tile(
-            TileTheme.CHALLENGE,
-            {
-                "Sunfire splinter": Count(150000),
-            },
-            id=1,
-            image="https://oldschool.runescape.wiki/images/Quests.png",
-            name="Wiki Gear",
-            description="TBD",
-        ),
-        Tile(
-            TileTheme.CHALLENGE,
-            {
-                "Sledding time": Count(1),
-            },
-            id=34,
-            image="https://oldschool.runescape.wiki/images/Sled_(unwaxed)_detail.png",
-            name="Cool for the Summer",
-            description='Achieve a sub 50 second sled time. To learn more about this activity, search for "Sled Racing" on the Wiki.',
-        ),
-        Tile(
-            TileTheme.CHALLENGE,
-            {
-                "Sunfire splinter": Count(150000),
-            },
-            id=29,
-            image="https://oldschool.runescape.wiki/images/Tzkal_slayer_helmet_detail.png",
-            name="Zoomies",
-            description="TBD: Sunfire splinters",
         ),
     ]
 
