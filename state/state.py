@@ -1,3 +1,4 @@
+import os
 from typing import List, Dict
 import jsonpickle
 
@@ -26,7 +27,11 @@ class State(object):
     def serialize(self):
         """Serialize the state to a JSON file."""
         try:
-            with open("state.json", "w") as f:
+            path = os.getenv("STATE_PATH")
+            if not path:
+                raise Exception("No state path provided in environment variables.")
+
+            with open(path, "w") as f:
                 data = jsonpickle.encode(self, keys=True)
                 if data is None:
                     raise Exception("Failed to serialize state")
@@ -41,13 +46,22 @@ class State(object):
         """Deserialize the state from a JSON file."""
         s = None
         try:
+            path = os.getenv("STATE_PATH")
+            if not path:
+                raise Exception("No state path provided in environment variables.")
+
             print("Attempting to load state from JSON file...")
-            with open("state.json", "r") as f:
+            with open(path, "r") as f:
                 s = jsonpickle.decode(f.read(), keys=True)
                 print("State deserialized successfully")
         except FileNotFoundError:
             print("No JSON state file found, initializing state...")
-            with open("state.json", "w") as f:
+
+            path = os.getenv("STATE_PATH")
+            if not path:
+                raise Exception("No state path provided in environment variables.")
+
+            with open(path, "w") as f:
                 data = jsonpickle.encode(State(), keys=True)
                 if data is None:
                     raise Exception("Failed to initialize state")
