@@ -29,31 +29,39 @@ class Teams(commands.GroupCog):
             res = f"{role} is already a team."
             return await i.response.send_message(res)
 
+        # Defer the response to avoid timeout, generating the board image can take a while
+        await i.response.defer()
+
         board = Board(generate_board())
         state.add_team(Team(role, board))
         images.generate_image(role.id)
 
-        res = f"Added {role} as a team."
-        await i.response.send_message(res)
-
         # Save the game state
         state.serialize()
+
+        res = f"Added {role} as a team."
+        await i.followup.send(res)
 
     @app_commands.command(name="remove", description="Remove a team based on a role.")
     @commands.has_permissions(manage_roles=True)
     async def remove(self, i: discord.Interaction, role: discord.Role):
         """Add a team based on a role."""
         if state.teams.get(role.id) is None:
-            await i.response.send_message(f"<@&{role.id}> is not a team.")
+            res = f"<@&{role.id}> is not a team."
+            await i.response.send_message(res)
             return
+
+        # Defer the response just in case as we're doing with the add command
+        await i.response.defer()
 
         state.remove_team(role.id)
         images.remove_image(role.id)
 
-        await i.response.send_message(f"Removed <@&{role.id}> from teams.")
-
         # Save the game state
         state.serialize()
+
+        res = f"Removed <@&{role.id}> from teams."
+        await i.followup.send(res)
 
     @app_commands.command(name="list", description="List all teams.")
     @commands.has_permissions(manage_roles=True)
