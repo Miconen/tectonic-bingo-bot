@@ -569,7 +569,6 @@ def generate_board():
     # Generate board connections
     board: Dict[int, GraphNode] = {}
     for key, tile in tile_dict.items():
-        tile.state = TileState.UNLOCKED
         node = board.setdefault(key, GraphNode(tile))
         for n in neighbor_map[key]:
             node.add_neighbor(n)
