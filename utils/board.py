@@ -63,7 +63,10 @@ def generate_board():
             image="https://oldschool.runescape.wiki/images/Tecu_salamander_detail.png",
             name="Cursed Gear",
             description="""
-                3x fight cave completions using only specified weapons // each must be done by a different player
+                3x fight cave completions using only specified weapons (each must be done by a different player).
+
+                PLEASE PROVIDE A SCREENSHOT OF YOUR STARTING GEAR ALONG WITH YOUR SUBMISSION AS PROOF!!!!!
+
                 Tecu Weapon (can wear any armor + any spells)
                 Cursed Goblin Staff (can wear any armor + any spells)
                 Cursed Goblin Bow (can wear any armor + any spells)
@@ -94,6 +97,7 @@ def generate_board():
             image="https://oldschool.runescape.wiki/images/Lil'_Zik.png",
             name="Theatre of Blood",
             required_for_completetion=1,
+            description="Get either 4 purples from Theatre of Blood or a Scythe of Vitur to complete.",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -105,7 +109,13 @@ def generate_board():
             id=4,
             image="https://oldschool.runescape.wiki/images/thumb/Flippers_detail.png/1024px-Flippers_detail.png",
             name="Mogre Dropper",
-            description="To kick it off the summer bingo, obtain a mudskipper hat and flippers.",
+            required_for_completetion=2,
+            description="""
+                To kick it off the summer bingo, obtain a mudskipper hat and flippers.
+
+                Pay attention to the "X/2 completed" this is how many "tasks" you have to complete to finish the tile. In this case, you need to get both items to complete the tile.
+                Sometimes the task itself will ask for X amount of items. Pay attention to the wording and ask for clarification if needed.
+            """,
         ),
         Tile(
             TileTheme.RAIDS,
@@ -126,7 +136,11 @@ def generate_board():
             id=5,
             image="https://oldschool.runescape.wiki/images/Twisted_ancestral_colour_kit_detail.png",
             name="Hard Modes",
-            description="Mix of all possible hard mode raid drops.",
+            description="""
+                Mix of all possible hard mode raid drops.
+
+                Either submit two of the kit tasks or a singular dust task to complete the tile.
+            """,
         ),
         Tile(
             TileTheme.HARD,
@@ -135,7 +149,8 @@ def generate_board():
             image="https://oldschool.runescape.wiki/images/Sunfire_splinters_4_detail.png",
             name="Blessings of Ralos",
             description="""
-                Acquire 150k total splinters from the Colosseum. Unique items can be submitted at the below values worth of sunfire splinters.\n
+                Acquire 150k total splinters from the Colosseum. Unique items can be submitted at the below values worth of sunfire splinters.
+
                 Echo crystal: 5k each
                 Sunfire armor: 10k each piece
                 Tonalztics of ralos: 15k
@@ -151,7 +166,12 @@ def generate_board():
             id=7,
             image="https://oldschool.runescape.wiki/images/Staff_of_light_detail.png",
             name="Staff of Light",
-            description="Get both pieces for a full Staff of Light as a team.\nZamorak/Saradomin hilt is a wildcard (can be submitted for either Staff of Light Piece)",
+            required_for_completetion=2,
+            description="""
+                Get both pieces for a full Staff of Light as a team.
+
+                Zamorak and Saradomin hilts are wildcards that can be submitted for either Staff of Light Piece.
+            """,
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -170,7 +190,8 @@ def generate_board():
             image="https://oldschool.runescape.wiki/images/Torva_full_helm_detail.png",
             name="Nex",
             description="""
-                Obtain any two nex uniques (Dupes and pets allowed)\n
+                Obtain any two nex uniques. (Dupes and pets allowed)
+
                 Torva platebody
                 Torva plaelegs
                 Torva helmet
@@ -185,7 +206,7 @@ def generate_board():
             id=10,
             image="https://oldschool.runescape.wiki/images/Infernal_cape_detail.png",
             name="Inferno",
-            description="Acquire three infernal capes (Zuk tasks allowed).",
+            description="Acquire three infernal capes (Tasks allowed).",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -200,9 +221,10 @@ def generate_board():
             {"Zulrah unique": Count(5)},
             id=12,
             image="https://oldschool.runescape.wiki/images/Snakeling.png",
-            name="Barrows",
+            name="Zulrah",
             description="""
-                Acquire 5 Zulrah uniques as a team. Duplicates count.\n
+                Acquire 5 Zulrah uniques as a team. Duplicates count.
+
                 Tanzanite fang
                 Magic fang
                 Serpentinve visage
@@ -229,7 +251,8 @@ def generate_board():
             id=13,
             image="https://oldschool.runescape.wiki/images/Bandos_tassets_detail.png",
             name="Bandos/Kree armor",
-            description="Mix and match a full set of Bandos/Armadyl armor. If you manage to get a hilt you can submit it under any armor piece of your choosing as a proof image.",
+            description="Mix and match a full set of Bandos/Armadyl armor. If you manage to get a Bandos/Armadyl hilt you can submit it under any god armor piece of your choosing as a proof image.",
+            required_for_completetion=3,
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -237,7 +260,7 @@ def generate_board():
                 "Spirit shield|Holy elixir": Some(
                     {
                         "Spirit shield": Count(1),
-                        "Holy elixit": Count(1),
+                        "Holy elixir": Count(1),
                     },
                     required=2,
                 ),
@@ -275,12 +298,12 @@ def generate_board():
                     5,
                 )
             },
-            required_for_completetion=5,
             id=15,
             image="https://oldschool.runescape.wiki/images/Vorkath's_head_detail.png",
             name="Stuffables",
             description="""
-                Stuffable means an item that the taxidermist will stuff for your POH.\n
+                Stuffable means an item that the taxidermist will stuff for your POH.
+
                 Crawling hand will not count for this tile as it is too common.
                 Sire and Hydra heads also will not count for this tile, as they count for the slayer boss tile.
                 Guaranteed Vorkath (50kc) and KQ (Tattered) heads do not count.
@@ -315,7 +338,7 @@ def generate_board():
             id=17,
             image="https://oldschool.runescape.wiki/images/Purple_partyhat_detail.png",
             name="Any Purple",
-            description="Any purple or pet from any raid. This purple will not count for future raid tiles.",
+            description="Any purple or pet from any raid. This purple or pet will not count for future raid tiles.",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -330,8 +353,8 @@ def generate_board():
             {"Purple sweets": Count(250)},
             id=19,
             image="https://oldschool.runescape.wiki/images/Purple_sweets_detail.png",
-            name="Purple Clues",
-            description="Obtain 250 purple sweets; Must submit proof that you have no pre-stacked caskets.",
+            name="Purple Sweets",
+            description="Obtain 250 purple sweets; Must submit proof that you have no pre-stacked caskets, as they can not be used for this tile.",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -351,12 +374,21 @@ def generate_board():
             id=20,
             image="https://oldschool.runescape.wiki/images/Granite_maul_detail.png",
             name="Granite Chad",
-            description="Obtain any 4: granite boots, granite swords, granite legs, granite shield, granite helm, granite maul.",
+            description="""
+                Obtain any 4 of the following...
+
+                Granite boots
+                Granite sword
+                Granite legs
+                Granite shield
+                Granite helm
+                Granite maul
+            """,
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
             {
-                "Granite gloves|Granite ring|Granite hammer|Tourmaline core|Full trident of the seas|Kraken tentacle|Bludgeon piece|Abyssal dagger|Abyssal head|Smoke battlestaff|Occult Necklace|Brimstone ring piece|Hydra tail|Hydra leather|Hydra’s claw|Alchemical Hydra Heads|Pegasian crystal|Eternal crystal|Primordial crystal|Smouldering Stone": Some(
+                "Granite gloves|Granite ring|Granite hammer|Tourmaline core|Full trident of the seas|Kraken tentacle|Bludgeon piece|Abyssal dagger|Abyssal head|Smoke battlestaff|Occult Necklace|Brimstone ring piece|Hydra tail|Hydra leather|Hydra’s claw|Alchemical Hydra Heads|Pegasian crystal|Eternal crystal|Primordial crystal|Smouldering Stone|Slayer pet|Slayer jar": Some(
                     {
                         "Granite gloves": Count(1),
                         "Granite ring": Count(1),
@@ -378,6 +410,8 @@ def generate_board():
                         "Eternal crystal": Count(1),
                         "Primordial crystal": Count(1),
                         "Smouldering Stone": Count(1),
+                        "Slayer pet": Count(1),
+                        "Slayer jar": Count(1),
                     },
                     5,
                 )
@@ -386,7 +420,7 @@ def generate_board():
             image="https://oldschool.runescape.wiki/images/Slayer_helmet_detail.png",
             name="Slayer Bosses",
             description="""
-                Obtain 5 unique slayer related drops. You may obtain multiple different uniques from the same boss (no dupes). Only the uniques listed below will count towards the tile. Pets & jars will count as uniques.
+                Obtain 5 unique slayer related drops. You may obtain multiple different uniques from the same boss (no dupes). Only the uniques listed below will count towards the tile. Any slayer pet & jar will count as a unique once.
 
                 (only 1 bludgeon piece will count towards the tile)
                 (only 1 piece of brimstone ring will count towards the tile)
@@ -405,6 +439,7 @@ def generate_board():
             id=23,
             image="https://oldschool.runescape.wiki/images/Burnt_page_detail.png",
             name="Wintertodt",
+            description="Be sure to send an image of no supply crates in your bank before starting acquiring them."
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -423,14 +458,15 @@ def generate_board():
             id=25,
             image="https://oldschool.runescape.wiki/images/Arcane_prayer_scroll_detail.png",
             name="Chambers of Xeric",
+            description="Get 3 purples or a megarare from Chambers of Xeric.",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
-            {"Moons unique": Count(5)},
+            {"Moons unique": Count(6)},
             id=26,
             image="https://oldschool.runescape.wiki/images/Blood_moon_helm_detail.png",
             name="Moons of Peril",
-            description="Any 5 uniques from Moons of Peril",
+            description="Any 6 uniques from Moons of Peril.",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -458,7 +494,7 @@ def generate_board():
             id=27,
             image="https://oldschool.runescape.wiki/images/Twisted_slayer_helmet_detail.png",
             name="Miscellaneous Slayer",
-            description="Achieve five miscellaneous slayer related items from the list or get an imbued heart.",
+            description="Achieve five miscellaneous slayer related items from the list or get an Imbued Heart.",
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -466,14 +502,21 @@ def generate_board():
             id=28,
             image="https://oldschool.runescape.wiki/images/Fossilised_dung_detail.png",
             name="Tombs of Amascut",
+            description="Get 5 purples or a Tumeken's Shadow from Tombs of Amascut.",
         ),
         Tile(
             TileTheme.CHALLENGE,
             {"Perilous Moons Colosseum": Count(1)},
             id=29,
-            image="https://oldschool.runescape.wiki/images/Executioner's_axe_head_detail.png",
+            image="https://oldschool.runescape.wiki/images/Dual_macuahuitl_detail.png",
             name="Bonk Bonk",
-            description="Complete the Colosseum using gear from Moons of Peril for each applicable slot (Rest is fine to fill in).",
+            description="""
+                Complete the Colosseum using gear from Moons of Peril for each applicable slot. (Rest is fine to fill in).
+
+                You are allowed to use any spells and supplies, and a non-dps focused spec weapon (i.e SGS). Your main source of damage should come from the Moons of Peril gear.
+
+                Please save a screenshot of your gear setup before starting the Colosseum. This is to ensure that you are using the correct gear for the tile. If you have any questions about what gear is allowed, please ask before starting. If you do not have a screenshot of your gear setup, you will not be able to submit for this tile.
+            """,
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -492,7 +535,7 @@ def generate_board():
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
-            {"Guild hunter outfit piece": Count(5), "Quetzin": Count(1)},
+            {"Guild hunter outfit piece": Count(4), "Quetzin": Count(1)},
             id=31,
             image="https://oldschool.runescape.wiki/images/Quetzin_detail.png",
             name="Hunter Rumors",
@@ -511,7 +554,10 @@ def generate_board():
             id=33,
             image="https://oldschool.runescape.wiki/images/Executioner's_axe_head_detail.png",
             name="Desert Treasure II",
-            description="Any 3 Desert Treasure II uniques, including ingots. Any DT2 pet will also complete the tile.",
+            description="""
+                Any 3 Desert Treasure II uniques, including ingots. (Dupes allowed. Orbs don't count).
+                Any DT2 pet will also complete the tile.
+            """,
         ),
         Tile(
             TileTheme.CHALLENGE,
@@ -521,7 +567,10 @@ def generate_board():
             id=34,
             image="https://oldschool.runescape.wiki/images/Sled_(unwaxed)_detail.png",
             name="Cool for the Summer",
-            description='Achieve a sub 50 second sled time. To learn more about this activity, search for "Sled Racing" on the Wiki.',
+            description="""
+                Achieve a sub 50 second sled time. To learn more about this activity, search for "Sled Racing" on the Wiki.
+                There is also hidden tech to achieve a faster time, so make sure to research the activity.
+            """,
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -530,8 +579,11 @@ def generate_board():
             },
             id=35,
             image="https://oldschool.runescape.wiki/images/Harmonised_orb_detail.png",
-            name="Nightmare",
-            description="Get any unique from the Nightmare.",
+            name="Nightmare Guy",
+            description="""
+                Get any unique from the Nightmare.
+                Only drops from the unique table count, including jar and pet. (No tablet or egg).
+            """,
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
@@ -547,7 +599,7 @@ def generate_board():
             id=36,
             image="https://oldschool.runescape.wiki/images/Soaked_page_detail.png",
             name="Tempoross",
-            description="Be sure to send an image of an empty reward pool before pulling rewards that you're gong to submit for this tile.",
+            description="Be sure to send an image of an empty reward pool before starting playing Tempoross as proof of no stacked reward permits.",
         ),
     ]
 
@@ -569,6 +621,7 @@ def generate_board():
     # Generate board connections
     board: Dict[int, GraphNode] = {}
     for key, tile in tile_dict.items():
+        tile.state = TileState.UNLOCKED
         node = board.setdefault(key, GraphNode(tile))
         for n in neighbor_map[key]:
             node.add_neighbor(n)
