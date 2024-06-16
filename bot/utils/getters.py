@@ -19,7 +19,8 @@ footer_texts: List[str] = [
     "Cwiiiiiiimp",
     "Hawkeye DP",
     "🥄🐀",
-    "Free tile for who reads this",
+    "Thanks Aldy",
+    "But what if we made them use a salamander...?",
 ]
 
 
