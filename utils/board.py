@@ -439,7 +439,7 @@ def generate_board():
             id=23,
             image="https://oldschool.runescape.wiki/images/Burnt_page_detail.png",
             name="Wintertodt",
-            description="Be sure to send an image of no supply crates in your bank before starting acquiring them."
+            description="Be sure to send an image of no supply crates in your bank before starting acquiring them. Trading pieces for pages does not count towards your page count."
         ),
         Tile(
             TileTheme.MISCELLANEOUS,
