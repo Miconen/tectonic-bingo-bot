@@ -199,7 +199,7 @@ class Submit(commands.Cog):
         status = get_tile_state_by_task(team, task)
         # Check if the task has already been submitted
         if status == TileState.COMPLETED:
-            res = f"{task} is already completed for {team}"
+            res = f"{task} is already completed for {state.teams[team].get_name()}"
             return await i.response.send_message(res)
 
         if status != TileState.UNLOCKED:
