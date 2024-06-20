@@ -77,7 +77,7 @@ class Teams(commands.GroupCog):
                 for team in state.teams.values()
             ]
         )
-        await i.response.send_message(f"# Teams / Roles\n{teams}", silent=True)
+        await i.response.send_message(f"# Teams / Roles\n{teams}", silent=True, ephemeral=True)
 
 
 async def setup(bot: commands.Bot) -> None:
