@@ -1,6 +1,7 @@
 from typing import Dict
 from functools import reduce
 
+from bot.utils.input import sanitize_string
 from models.tile import Criteria
 
 
@@ -47,7 +48,8 @@ class Some(Criteria, object):
 
     def submit(self, inc: int, key: str) -> bool:
         for k, criteria in self.criteria.items():
-            if k == key:
+            criteria_key = sanitize_string(k)
+            if criteria_key == key:
                 return criteria.submit(inc, key)
 
         return False
