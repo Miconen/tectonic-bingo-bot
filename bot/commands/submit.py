@@ -116,7 +116,7 @@ class Buttons(discord.ui.View):
     @discord.ui.button(
         custom_id="accept", label="🛡️Accept", style=discord.ButtonStyle.green
     )
-    @commands.has_permissions(manage_roles=True)
+    @commands.has_permissions(manage_channels=True)
     async def accept_button(self, i: discord.Interaction, button: discord.ui.Button):
         if self.submission.i.channel is None:
             return
@@ -124,7 +124,7 @@ class Buttons(discord.ui.View):
             return
         if self.submission.tile.proof is None:
             return
-        if not i.permissions.manage_roles:
+        if not i.permissions.manage_channels:
             return
 
         # Accept proof
@@ -141,7 +141,7 @@ class Buttons(discord.ui.View):
         state.serialize()
 
     @discord.ui.button(custom_id="deny", label="🛡️Deny", style=discord.ButtonStyle.red)
-    @commands.has_permissions(manage_roles=True)
+    @commands.has_permissions(manage_channels=True)
     async def deny_button(self, i: discord.Interaction, button: discord.ui.Button):
         if self.submission.i.channel is None:
             return
@@ -149,7 +149,7 @@ class Buttons(discord.ui.View):
             return
         if self.submission.tile.proof is None:
             return
-        if not i.permissions.manage_roles:
+        if not i.permissions.manage_channels:
             return
         # Remove proof
         self.submission.tile.proof = None
