@@ -57,27 +57,28 @@ def bytes_to_file(b: BytesIO, id: int) -> discord.File:
 
 @dataclass
 class ImageState:
-    images: Dict[int, discord.File]
+    images: Dict[int, BytesIO]
 
     def get_image(self, team_id: int) -> discord.File | None:
-        image = self.images.get(team_id)
-        if not image:
+        bytes = self.images.get(team_id)
+        if not bytes:
             return self.generate_image(team_id)
+
+        image = bytes_to_file(bytes, team_id)
+
+        # Be kind, rewind the read pointer for the next read
+        bytes.seek(0)
+
         return image
 
     def set_image(
-        self, team_id: int, image: discord.File | BytesIO | Image.Image
+        self, team_id: int, image: Image.Image
     ) -> bool:
-        if isinstance(image, BytesIO):
-            image = bytes_to_file(image, team_id)
+        image_bytes = BytesIO()
+        image.save(image_bytes, format="PNG")
+        image_bytes.seek(0)
 
-        if isinstance(image, Image.Image):
-            image_bytes = BytesIO()
-            image.save(image_bytes, format="PNG")
-            image_bytes.seek(0)
-            image = bytes_to_file(image_bytes, team_id)
-
-        self.images[team_id] = image
+        self.images[team_id] = image_bytes
         return True
 
     def generate_image(self, team_id: int):
