@@ -153,7 +153,7 @@ class Debug(commands.GroupCog):
         name="check", description="Force check a teams tile"
     )
     @commands.has_permissions(manage_roles=True)
-    async def undo(
+    async def check(
         self,
         i: discord.Interaction,
         role: discord.Role,
