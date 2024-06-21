@@ -118,22 +118,38 @@ class Buttons(discord.ui.View):
     )
     @commands.has_permissions(manage_channels=True)
     async def accept_button(self, i: discord.Interaction, button: discord.ui.Button):
+        await i.response.defer()
+
+        if i.message is None:
+            return await i.followup.send(ephemeral=True, content="No message associated with the interaction.")
+
         if self.submission.i.channel is None:
-            return
+            return await i.followup.send(ephemeral=True, content="Submission channel is not available.")
+
         if not isinstance(self.submission.i.channel, discord.TextChannel):
-            return
+            return await i.followup.send(ephemeral=True, content="Submission channel is not a text channel.")
+
         if self.submission.tile.proof is None:
-            return
+            return await i.followup.send(ephemeral=True, content="No proof is available for the submission.")
+
         if not i.permissions.manage_channels:
-            return
+            return await i.followup.send(ephemeral=True, content="You do not have permission to manage channels.")
+
+        proof = self.submission.tile.proof[self.submission.proof_index]
+
+        if proof is None:
+            # Remove proof
+            self.submission.tile.proof.pop(self.submission.proof_index)
+            print("Proof not found, failed to accept.")
+            return i.followup.send(ephemeral=True, content="Failed to accept proof. Try resubmitting.")
 
         # Accept proof
-        self.submission.tile.proof[self.submission.proof_index].approved = True
-        self.submission.tile.proof[self.submission.proof_index].approved_by = i.user.id
-        self.submission.tile.proof[self.submission.proof_index].approved_at = time(
-        )
+        proof.approved = True
+        proof.approved_by = i.user.id
+        proof.approved_at = time()
 
-        await i.response.edit_message(
+        await i.followup.edit_message(
+                i.message.id,
             content=await accept_submission(self.submission), view=None
         )
 
@@ -143,18 +159,28 @@ class Buttons(discord.ui.View):
     @discord.ui.button(custom_id="deny", label="🛡️Deny", style=discord.ButtonStyle.red)
     @commands.has_permissions(manage_channels=True)
     async def deny_button(self, i: discord.Interaction, button: discord.ui.Button):
-        if self.submission.i.channel is None:
-            return
-        if not isinstance(self.submission.i.channel, discord.TextChannel):
-            return
-        if self.submission.tile.proof is None:
-            return
-        if not i.permissions.manage_channels:
-            return
-        # Remove proof
-        self.submission.tile.proof = None
+        await i.response.defer()
 
-        await i.response.edit_message(
+        if i.message is None:
+            return await i.followup.send(ephemeral=True, content="No message associated with the interaction.")
+
+        if self.submission.i.channel is None:
+            return await i.followup.send(ephemeral=True, content="Submission channel is not available.")
+
+        if not isinstance(self.submission.i.channel, discord.TextChannel):
+            return await i.followup.send(ephemeral=True, content="Submission channel is not a text channel.")
+
+        if self.submission.tile.proof is None:
+            return await i.followup.send(ephemeral=True, content="No proof is available for the submission.")
+
+        if not i.permissions.manage_channels:
+            return await i.followup.send(ephemeral=True, content="You do not have permission to manage channels.")
+
+        # Remove proof
+        self.submission.tile.proof.pop(self.submission.proof_index)
+
+        await i.followup.edit_message(
+                i.message.id,
             content=await deny_submission(self.submission), view=None
         )
 
