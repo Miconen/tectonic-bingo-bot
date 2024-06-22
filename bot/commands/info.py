@@ -80,12 +80,12 @@ class Info(commands.Cog):
             return choices
 
         def team_tiles(tile: Tile) -> bool:
-            # Filter out non matching autocomplete entries
-            if user_input.lower() not in tile.name.lower():
-                return False
-
             # Check if tile is unlocked
             if not tile.is_unlocked():
+                return False
+
+            # Filter out non matching autocomplete entries
+            if user_input.lower() not in tile.name.lower():
                 return False
 
             return True
