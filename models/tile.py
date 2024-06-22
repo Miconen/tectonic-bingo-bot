@@ -122,6 +122,14 @@ class Tile:
     rules_link: str = ""
     proof: List[Proof] | None = None
 
+    def get_tasks(self) -> List[str]:
+        tasks: List[str] = []
+
+        for task in self.requirements.keys():
+            tasks.extend(task.split("|"))
+
+        return tasks
+
     # Additional functionalities can be added as methods within the class
     def is_complete(self) -> bool:
         """Check if the tile is complete."""
