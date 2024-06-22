@@ -3,6 +3,7 @@ from dataclasses import dataclass
 import discord
 from discord.ext import commands
 from io import BytesIO
+from typing import List
 
 from models.graph import GraphNode
 from models.board import Board
@@ -146,7 +147,9 @@ class Buttons(discord.ui.View):
             # Remove proof
             self.submission.tile.proof.pop(self.submission.proof_index)
             print("Proof not found, failed to accept.")
-            return i.followup.send(ephemeral=True, content="Failed to accept proof. Try resubmitting.")
+            return i.followup.send(
+                ephemeral=True, content="Failed to accept proof. Try resubmitting."
+            )
 
         # Accept proof
         proof.approved = True
@@ -154,8 +157,7 @@ class Buttons(discord.ui.View):
         proof.approved_at = time()
 
         await i.followup.edit_message(
-                i.message.id,
-            content=await accept_submission(self.submission), view=None
+            i.message.id, content=await accept_submission(self.submission), view=None
         )
 
         # Save the game state
@@ -167,26 +169,35 @@ class Buttons(discord.ui.View):
         await i.response.defer()
 
         if i.message is None:
-            return await i.followup.send(ephemeral=True, content="No message associated with the interaction.")
+            return await i.followup.send(
+                ephemeral=True, content="No message associated with the interaction."
+            )
 
         if self.submission.i.channel is None:
-            return await i.followup.send(ephemeral=True, content="Submission channel is not available.")
+            return await i.followup.send(
+                ephemeral=True, content="Submission channel is not available."
+            )
 
         if not isinstance(self.submission.i.channel, discord.TextChannel):
-            return await i.followup.send(ephemeral=True, content="Submission channel is not a text channel.")
+            return await i.followup.send(
+                ephemeral=True, content="Submission channel is not a text channel."
+            )
 
         if self.submission.tile.proof is None:
-            return await i.followup.send(ephemeral=True, content="No proof is available for the submission.")
+            return await i.followup.send(
+                ephemeral=True, content="No proof is available for the submission."
+            )
 
         if not i.permissions.manage_channels:
-            return await i.followup.send(ephemeral=True, content="You do not have permission to manage channels.")
+            return await i.followup.send(
+                ephemeral=True, content="You do not have permission to manage channels."
+            )
 
         # Remove proof
         self.submission.tile.proof.pop(self.submission.proof_index)
 
         await i.followup.edit_message(
-                i.message.id,
-            content=await deny_submission(self.submission), view=None
+            i.message.id, content=await deny_submission(self.submission), view=None
         )
 
         # Save the game state
@@ -310,6 +321,45 @@ class Submit(commands.Cog):
 
         # Save the game state
         state.serialize()
+
+    @submit.autocomplete(name="task")
+    async def submit_autocomplete(self, i: discord.Interaction, user_input: str):
+        choices = []
+
+        if i.channel is None:
+            return choices
+        if not isinstance(i.channel, discord.TextChannel):
+            return choices
+        if not isinstance(i.user, discord.Member):
+            return choices
+
+        team_id = in_team(i.user, state.teams)
+        if team_id is None:
+            return choices
+
+        team = state.get_team(team_id)
+        if team is None:
+            return choices
+
+        unlocked_tiles = [
+            tile
+            for tile in team.board.get_tiles().values()
+            if tile.is_unlocked()
+        ]
+
+        unlocked_tasks = [
+            task
+            for tile in unlocked_tiles
+            for task in tile.get_tasks()
+        ]
+
+        choices = [
+            app_commands.Choice(name=task, value=task)
+            for task in unlocked_tasks
+            if user_input.lower() in task.lower()
+        ]
+
+        return choices[:24]
 
 
 async def get_proof_file(proof: discord.Attachment) -> BytesIO | Exception:
