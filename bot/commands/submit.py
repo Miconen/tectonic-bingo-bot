@@ -123,22 +123,27 @@ class Buttons(discord.ui.View):
 
         if i.message is None:
             res = "No message associated with the interaction."
+            print(res)
             return await i.followup.send(res, ephemeral=True)
 
         if self.submission.i.channel is None:
             res = "Submission channel is not available."
+            print(res)
             return await i.followup.send(res, ephemeral=True)
 
         if not isinstance(self.submission.i.channel, discord.TextChannel):
             res = "Submission channel is not a text channel."
+            print(res)
             return await i.followup.send(res, ephemeral=True)
 
         if self.submission.tile.proof is None:
             res = "No proof is available for the submission."
+            print(res)
             return await i.followup.send(res, ephemeral=True)
 
         if not i.permissions.manage_channels:
             res = "You do not have permission to manage channels."
+            print(res)
             return await i.followup.send(res, ephemeral=True)
 
         proof = self.submission.tile.proof[self.submission.proof_index]

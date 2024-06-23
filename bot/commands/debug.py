@@ -150,6 +150,99 @@ class Debug(commands.GroupCog):
 
         await i.followup.send(msg, silent=True)
 
+    @app_commands.command(
+            name="unlock", description="Force unlock a tile"
+        )
+    @commands.has_permissions(manage_roles=True)
+    async def unlock(self, i: discord.Interaction, role: discord.Role, tile_id: app_commands.Range[int, 1, 36]):
+        await i.response.defer()
+
+        if i.channel is None:
+            return
+        if not isinstance(i.channel, discord.TextChannel):
+            return
+        if not isinstance(i.user, discord.Member):
+            return
+        if not i.permissions.manage_roles:
+            return
+
+        team = state.get_team(role.id)
+        if team is None:
+            res = f"Team is not part of the bingo"
+            return await i.followup.send(res, ephemeral=True)
+
+        board = team.board
+        tile = next(
+            (
+                node.value
+                for k, node in board.get_nodes().items()
+                if k == tile_id
+            ),
+            None,
+        )
+
+        if tile is None:
+            res = f"No tile locked with ID #{tile_id} for team ({team.get_name()})"
+            return await i.followup.send(res)
+
+        tile.state = TileState.UNLOCKED
+
+        # Generate updated board
+        images.generate_image(team.get_id())
+
+        # Save game state
+        state.serialize()
+
+        res = f"Tile #{tile_id} unlocked for team ({team.get_name()})"
+        await i.followup.send(res, ephemeral=True)
+
+
+    @app_commands.command(
+            name="lock", description="Force lock a tile"
+        )
+    @commands.has_permissions(manage_roles=True)
+    async def lock(self, i: discord.Interaction, role: discord.Role, tile_id: app_commands.Range[int, 1, 36]):
+        await i.response.defer()
+
+        if i.channel is None:
+            return
+        if not isinstance(i.channel, discord.TextChannel):
+            return
+        if not isinstance(i.user, discord.Member):
+            return
+        if not i.permissions.manage_roles:
+            return
+
+        team = state.get_team(role.id)
+        if team is None:
+            res = f"Team is not part of the bingo"
+            return await i.followup.send(res, ephemeral=True)
+
+        board = team.board
+        tile = next(
+            (
+                node.value
+                for k, node in board.get_nodes().items()
+                if k == tile_id
+            ),
+            None,
+        )
+
+        if tile is None:
+            res = f"No tile unlocked with ID #{tile_id} for team ({team.get_name()})"
+            return await i.followup.send(res)
+
+        tile.state = TileState.LOCKED
+
+        # Generate updated board
+        images.generate_image(team.get_id())
+
+        # Save game state
+        state.serialize()
+
+        res = f"Tile #{tile_id} locked for team ({team.get_name()})"
+        await i.followup.send(res, ephemeral=True)
+
 
     @app_commands.command(
         name="check", description="Force check a teams tile"
