@@ -92,37 +92,39 @@ class Debug(commands.GroupCog):
         tile_id: app_commands.Range[int, 1, 36],
     ):
         """Undo the last action of a tile's proof."""
+        await i.response.defer()
+
         team = state.get_team(role.id)
         if team is None:
             res = f"Team for role <@&{role.id}> not found"
-            return await i.response.send_message(res)
+            return await i.followup.send(res)
 
         tile = team.board.get_tile(tile_id)
 
         if tile is None:
             res = f"Tile #{tile_id} not found for team {role.name}"
-            return await i.response.send_message(res)
+            return await i.followup.send(res)
 
         if tile.proof is None:
             res = f"No proof submitted for tile #{tile_id}"
-            return await i.response.send_message(res)
+            return await i.followup.send(res)
 
         if len(tile.proof) == 0:
             res = f"No proof submitted for tile #{tile_id}"
-            return await i.response.send_message(res)
+            return await i.followup.send(res)
 
         was_completed = tile.check_complete()
         proof = None if len(tile.proof) == 0 else tile.proof[-1]
 
         if proof is None:
             res = f"Last proof submission for tile {tile_id} not found"
-            return await i.response.send_message(res)
+            return await i.followup.send(res)
 
         removed = tile.remove_submission(proof)
 
         if not removed:
             res = f"Last proof submission for tile {tile_id} was not removed"
-            return await i.response.send_message(res)
+            return await i.followup.send(res)
 
         # Remove the proof from state
         tile.proof.pop()
@@ -146,7 +148,7 @@ class Debug(commands.GroupCog):
         # Save game state
         state.serialize()
 
-        await i.response.send_message(msg, silent=True)
+        await i.followup.send(msg, silent=True)
 
 
     @app_commands.command(
