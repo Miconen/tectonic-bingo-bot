@@ -58,21 +58,20 @@ async def accept_submission(submission: Submission):
             submission.node, TileState.UNLOCKED, excludes=[TileState.COMPLETED]
         )
 
-        if len(new_tiles) == 0:
-            return
-
         # Generate updated board
         images.generate_image(submission.team.get_id())
 
-        embed = get_unlock_embed(submission.i, submission.team, new_tiles)
+        if len(new_tiles) >= 0:
 
-        # Check if is text channel
-        if submission.i.channel is None:
-            return
-        if not isinstance(submission.i.channel, discord.TextChannel):
-            return
+            embed = get_unlock_embed(submission.i, submission.team, new_tiles)
 
-        await submission.i.channel.send(embed=embed)
+            # Check if is text channel
+            if submission.i.channel is None:
+                return
+            if not isinstance(submission.i.channel, discord.TextChannel):
+                return
+
+            await submission.i.channel.send(embed=embed)
 
     return get_submission_message(
         submission.i,
