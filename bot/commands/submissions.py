@@ -12,7 +12,7 @@ app_commands = discord.app_commands
 
 class Buttons(discord.ui.View):
     def __init__(self, user: discord.Member, submissions: List[Proof]):
-        super().__init__()
+        super().__init__(timeout=None)
         self.user = user
         self.submissions = submissions
         self.current_page = 0
