@@ -9,6 +9,63 @@ from utils.teams import in_team
 
 app_commands = discord.app_commands
 
+
+class Buttons(discord.ui.View):
+    def __init__(self, user: discord.Member, submissions: List[Proof]):
+        super().__init__()
+        self.user = user
+        self.submissions = submissions
+        self.current_page = 0
+        self.per_page = 8
+        self.max_pages = (len(submissions) - 1) // self.per_page
+
+        if len(submissions) <= self.per_page:
+            self.clear_items()
+
+    def get_page(self):
+        start = self.current_page * self.per_page
+        end = start + self.per_page
+        page = self.submissions[start:end]
+
+        msg = f"# Submissions for {self.user.display_name}\n"
+        for proof in page:
+            res = f"{proof.amount}x {proof.task} - {proof.message} {get_relative_time(TimestampType.DATE_TIME_SHORT, proof.submitted_at)} ({get_relative_time(TimestampType.RELATIVE, proof.submitted_at)})"
+            msg += f"{res}\n"
+
+        if self.max_pages > 0:
+            msg += f"\nPage {self.current_page + 1}/{self.max_pages + 1}"
+
+        return msg
+
+    @discord.ui.button(
+        custom_id="previous", label="Previous", style=discord.ButtonStyle.primary
+    )
+    async def previous_page(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
+        if self.current_page == 0:
+            return await interaction.response.send_message(
+                "You are already on the first page", ephemeral=True
+            )
+
+        self.current_page -= 1
+        await interaction.response.edit_message(content=self.get_page(), view=self)
+
+    @discord.ui.button(
+        custom_id="next", label="Next", style=discord.ButtonStyle.primary
+    )
+    async def next_page(
+        self, interaction: discord.Interaction, button: discord.ui.Button
+    ):
+        if self.current_page == self.max_pages:
+            return await interaction.response.send_message(
+                "You are already on the last page", ephemeral=True
+            )
+
+        self.current_page += 1
+        await interaction.response.edit_message(content=self.get_page(), view=self)
+
+
 class Submissions(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -54,13 +111,9 @@ class Submissions(commands.Cog):
             res = f"No submissions found"
             return await i.response.send_message(res, ephemeral=True)
 
-        msg = f"# Submissions for {i.user.display_name}\n"
-        proofs: List[str] = []
-        for proof in submissions:
-            res = f"{proof.amount}x {proof.task} - {proof.message} {get_relative_time(TimestampType.DATE_TIME_SHORT, proof.submitted_at)} ({get_relative_time(TimestampType.RELATIVE, proof.submitted_at)})"
-            proofs.append(res)
+        view = Buttons(i.user, submissions)
+        await i.response.send_message(view.get_page(), silent=True, view=view)
 
-        await i.response.send_message(msg + "\n".join(proofs), silent=True)
 
 async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Submissions(bot))
